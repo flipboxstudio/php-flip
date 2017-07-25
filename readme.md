@@ -52,7 +52,7 @@ PHPFlip has a rigid rules about how to adding new components.
 
 Here's what you need to do if you want to add new feature:
 
-1. You need to create `Manager`. Manager is responsible to managing resource, it has many "hands" to handle it's responsibilities. You also needs to create these "hands" too. These "hands" are:
+1. You need to create `Manager`. Manager is responsible to managing resource, it has many "hands" to handle it's responsibilities. These "hands" are injected to the manager via service locator. You also needs to create these "hands" too. These "hands" may includes:
     - `Repository`
         - `Model`
             - `Autobot`
@@ -66,7 +66,7 @@ Here's what you need to do if you want to add new feature:
             - A `Model` has it's own `Autobot`. `Autobot` is a file that responsible to convert a database record to a rigid structure that will be used for application response.
     - Another class you need to make is an `Entity`. `Entity` is a class that contains business logic such as calculation method, creation method, or something else.
     - You may need a `Rules` after then. Just like it's name, `Rules` is responsible to validate any operation, it only contains rulesets that any operation should pass before it can continue.
-    - You can make it more "separated" by making a event-driven class. Just make a `Publisher` (a class that defines an event name) that has one or many `Subscriber(s)` (a class that triggered when an event is happens). You have to trigger a `Publisher`, then any `Subscriber(s)` that listen to that `Publisher` will triggered based on it's priority.
+    - You can make it more "separated" by making a event-driven class. Just make a `Publisher` (a class that defines an event name) that has one or many `Subscriber(s)` (a class that triggered when an event happens). You have to trigger a `Publisher` (via `Emitter`), then any `Subscriber(s)` that listen to that `Publisher` will triggered based on it's priority.
 2. **TESTING IS IMPORTANT**. Make sure you make a test case inside `core-tests` folder. Don't forget to full run unit-test, so you will notice if you make a breaking-changes when making a new feature.
 3. Lastly, you need to fixing you code style to meet our specification. See *Code Fixing* section below.
 
