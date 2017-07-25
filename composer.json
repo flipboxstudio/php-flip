@@ -1,5 +1,5 @@
 {
-    "name": "flipbox/php-flip",
+    "name": "flipboxstudio/php-flip",
     "description": "Clean architecture from Flipbox.",
     "license": "MIT",
     "type": "project",
@@ -32,9 +32,9 @@
         ]
     },
     "scripts": {
-        "php-cs-fixer": [
-            "php-cs-fixer fix app --rules=@Symfony",
-            "php-cs-fixer fix core --rules=@Symfony"
+        "fixer": [
+            "php-cs-fixer fix --rules=@Symfony app",
+            "php-cs-fixer fix --rules=@Symfony core"
         ],
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
