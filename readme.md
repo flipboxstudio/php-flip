@@ -1,6 +1,6 @@
 # PHPFlip
 
-PHPFlip is a standard project architecture. It requires PHP 7.
+PHPFlip is a standard project architecture. It requires PHP 7.1.
 
 ### Application Structure
 
@@ -26,14 +26,12 @@ PHPFlip is a standard project architecture. It requires PHP 7.
     - Util (Don't touch, unless you know how to defeat a dragon)
         - Presenters
             - XML.php
-            - HAL.php
             - JSON.php
-            - BSON.php
             - Protobuf.php
     - PubSub
         - Emitter.php
         - Publishers (It could be grouped per module if needed)
-            - CourierIsNotOnline.php
+            - UserIsNotOnline.php
             - Users
                 - UserHasBeenCreated.php (naming should be as detail as possible)
                 - UserLostTheirPassword.php
