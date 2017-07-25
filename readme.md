@@ -61,12 +61,12 @@ Here's what you need to do if you want to add new feature:
     - `(Event)Emitter` (Optional)
         - `Publisher`
         - `Subscriber`
-    1.a. After you make a `Manager`. You have to make a `Repository`. A `Repository` is a class that responsible to interact with database (getting records or persisting records).
-        1.a.1. Inside `Repository`, there's a `Model`. `Model` is a class that representates a database record. It's like a Plain Ol' file. You may add some extra contract to define some useful methods.
-            1.a.1.a. A `Model` has it's own `Autobot`. `Autobot` is a file that responsible to convert a database record to a rigid structure that will be used for application response.
-    1.b. Another class you need to make is an `Entity`. `Entity` is a class that contains business logic such as calculation method, creation method, or something else.
-    1.c. You may need a `Rules` after then. Just like it's name, `Rules` is responsible to validate any operation, it only contains rulesets that any operation should pass before it can continue.
-    1.d. You can make it more "separated" by making a event-driven class. Just make a `Publisher` (a class that defines an event name) that has one or many `Subscriber(s)` (a class that triggered when an event is happens). You have to trigger a `Publisher`, then any `Subscriber(s)` that listen to that `Publisher` will triggered based on it's priority.
+    - After you make a `Manager`. You have to make a `Repository`. A `Repository` is a class that responsible to interact with database (getting records or persisting records).
+        - Inside `Repository`, there's a `Model`. `Model` is a class that representates a database record. It's like a Plain Ol' file. You may add some extra contract to define some useful methods.
+            - A `Model` has it's own `Autobot`. `Autobot` is a file that responsible to convert a database record to a rigid structure that will be used for application response.
+    - Another class you need to make is an `Entity`. `Entity` is a class that contains business logic such as calculation method, creation method, or something else.
+    - You may need a `Rules` after then. Just like it's name, `Rules` is responsible to validate any operation, it only contains rulesets that any operation should pass before it can continue.
+    - You can make it more "separated" by making a event-driven class. Just make a `Publisher` (a class that defines an event name) that has one or many `Subscriber(s)` (a class that triggered when an event is happens). You have to trigger a `Publisher`, then any `Subscriber(s)` that listen to that `Publisher` will triggered based on it's priority.
 2. **TESTING IS IMPORTANT**. Make sure you make a test case inside `core-tests` folder. Don't forget to full run unit-test, so you will notice if you make a breaking-changes when making a new feature.
 3. Lastly, you need to fixing you code style to meet our specification. See *Code Fixing* section below.
 
