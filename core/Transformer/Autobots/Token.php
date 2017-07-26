@@ -2,7 +2,7 @@
 
 namespace Core\Transformer\Autobots;
 
-use Core\Responses\Token as TokenResponse;
+use Core\Responses\TokenResponse;
 use Core\Contracts\Models\Token as TokenModelContract;
 
 class Token extends Autobot

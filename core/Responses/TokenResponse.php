@@ -6,7 +6,7 @@ use Core\Util\Data\Fluent;
 use Core\Contracts\Models\User as UserModelContract;
 use Core\Contracts\Models\Token as TokenModelContract;
 
-class Token extends Fluent
+class TokenResponse extends Fluent
 {
     protected $token;
 

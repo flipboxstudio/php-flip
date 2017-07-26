@@ -19,28 +19,28 @@ use Core\Contracts\Repositories\User as UserRepositoryContract;
 
 class UserManager
 {
-    protected $transformer;
-
-    protected $eventEmitter;
-
     protected $userRepository;
-
-    protected $hasher;
 
     protected $validator;
 
+    protected $transformer;
+
+    protected $emitter;
+
+    protected $hasher;
+
     public function __construct(
-        Transformer $transformer,
-        Emitter $eventEmitter,
         UserRepositoryContract $userRepository,
-        HasherContract $hasher,
-        Validator $validator
+        Validator $validator,
+        Transformer $transformer,
+        Emitter $emitter,
+        HasherContract $hasher
     ) {
-        $this->transformer = $transformer;
-        $this->eventEmitter = $eventEmitter;
         $this->userRepository = $userRepository;
-        $this->hasher = $hasher;
         $this->validator = $validator;
+        $this->transformer = $transformer;
+        $this->emitter = $emitter;
+        $this->hasher = $hasher;
     }
 
     public function all(): IteratorAggregate
@@ -78,7 +78,7 @@ class UserManager
             $user->set('sex', $sex);
         }
 
-        $this->eventEmitter->emit(UserHasBeenCreated::class, $user, $password);
+        $this->emitter->emit(UserHasBeenCreated::class, $user, $password);
 
         $this->userRepository->save($user);
 

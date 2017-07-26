@@ -2,7 +2,7 @@
 
 namespace Core\Concerns;
 
-use Core\Responses\User as UserResponse;
+use Core\Responses\UserResponse;
 use Core\Exceptions\UnauthorizedException;
 
 trait Authorizable

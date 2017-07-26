@@ -4,8 +4,8 @@ namespace Test\Core;
 
 use Test\TestCase;
 use Core\App as CoreApp;
-use Core\Responses\User as UserResponse;
-use Core\Responses\Token as TokenResponse;
+use Core\Responses\UserResponse;
+use Core\Responses\TokenResponse;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Core\Contracts\Models\User as UserModelContract;
 use Core\Contracts\Models\Token as TokenModelContract;

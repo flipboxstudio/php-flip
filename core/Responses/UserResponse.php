@@ -5,7 +5,7 @@ namespace Core\Responses;
 use Core\Util\Data\Fluent;
 use Core\Contracts\Models\User as UserModelContract;
 
-class User extends Fluent
+class UserResponse extends Fluent
 {
     protected $user;
 

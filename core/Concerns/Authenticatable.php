@@ -5,8 +5,8 @@ namespace Core\Concerns;
 use DateTime;
 use DateInterval;
 use Illuminate\Support\Str;
-use Core\Responses\User as UserResponse;
-use Core\Responses\Token as TokenResponse;
+use Core\Responses\UserResponse;
+use Core\Responses\TokenResponse;
 use Core\Exceptions\AuthenticationException;
 use Core\PubSub\Publishers\CustomerForgotTheirPassword;
 

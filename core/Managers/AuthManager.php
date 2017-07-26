@@ -7,9 +7,9 @@ use Core\PubSub\Emitter;
 use Illuminate\Support\Arr;
 use Core\Validator\Validator;
 use Core\Concerns\Authorizable;
+use Core\Responses\UserResponse;
 use Core\Transformer\Transformer;
 use Core\Concerns\Authenticatable;
-use Core\Responses\User as UserResponse;
 use Core\Contracts\Util\Hasher as HasherContract;
 use Core\Validator\Rules\CustomerRegistrationRule;
 use Core\Contracts\Repositories\User as UserRepositoryContract;
@@ -19,32 +19,32 @@ class AuthManager
 {
     use Authenticatable, Authorizable;
 
-    protected $transformer;
-
-    protected $emitter;
-
-    protected $hasher;
-
     protected $userRepository;
 
     protected $tokenRepository;
 
     protected $validator;
 
+    protected $transformer;
+
+    protected $emitter;
+
+    protected $hasher;
+
     public function __construct(
+        UserRepositoryContract $userRepository,
+        TokenRepositoryContract $tokenRepository,
+        Validator $validator,
         Transformer $transformer,
         Emitter $emitter,
-        HasherContract $hasher,
-        UserRepositoryContract $userRepository,
-        Validator $validator,
-        TokenRepositoryContract $tokenRepository
+        HasherContract $hasher
     ) {
+        $this->userRepository = $userRepository;
+        $this->tokenRepository = $tokenRepository;
+        $this->validator = $validator;
         $this->transformer = $transformer;
         $this->emitter = $emitter;
         $this->hasher = $hasher;
-        $this->userRepository = $userRepository;
-        $this->validator = $validator;
-        $this->tokenRepository = $tokenRepository;
     }
 
     /**
