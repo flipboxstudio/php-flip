@@ -3,8 +3,6 @@
 namespace Test\App;
 
 use Test\TestCase;
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class RootTest extends TestCase
 {
@@ -12,7 +10,7 @@ class RootTest extends TestCase
     {
         $this->json('GET', '/')
              ->seeJson([
-                'message' => 'You have arrived.'
+                'message' => 'You have arrived.',
              ]);
     }
 }

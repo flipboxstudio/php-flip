@@ -101,7 +101,7 @@ phpunit --testsuite App
 composer global require friendsofphp/php-cs-fixer -vvv
 
 # in root folder of this project
-composer run-script cs-fixer
+composer run-script fixer
 ```
 
 ## TODO

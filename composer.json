@@ -35,7 +35,8 @@
     "scripts": {
         "fixer": [
             "php-cs-fixer fix --rules=@Symfony app",
-            "php-cs-fixer fix --rules=@Symfony core"
+            "php-cs-fixer fix --rules=@Symfony core",
+            "php-cs-fixer fix --rules=@Symfony test"
         ],
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""

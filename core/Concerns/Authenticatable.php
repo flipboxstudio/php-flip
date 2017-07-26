@@ -30,7 +30,7 @@ trait Authenticatable
             }
         }
 
-        throw new AuthenticationException('Incorrect Email or Password.', 400);
+        throw new AuthenticationException('Incorrect Email and / or Password.', 400);
     }
 
     public function logout(string $token)
