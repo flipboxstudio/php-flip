@@ -4,18 +4,18 @@ namespace Core\Validator\Rules;
 
 use Core\Contracts\Repositories\User as UserRepository;
 
-class CustomerRegistrationRule extends Rule
+class UserRegistrationRule extends Rule
 {
     public function rules(): array
     {
         return [
             'name' => [
-                'required',
+                'notEmpty',
                 'alpha',
-                'max_length(128)',
+                'length(null,128)',
             ],
             'email' => [
-                'required',
+                'notEmpty',
                 'email',
                 'max_length(64)',
                 'unique(email)' => $this->generateUniqueValidation(
@@ -23,21 +23,21 @@ class CustomerRegistrationRule extends Rule
                 ),
             ],
             'phone' => [
-                'required',
+                'notEmpty',
                 'alpha_numeric',
                 'max_length(16)',
             ],
             'address' => [
-                'required',
+                'notEmpty',
                 'max_length(512)',
             ],
             'password' => [
-                'required',
+                'notEmpty',
                 'min_length(8)',
                 'equals(:password_verify)',
             ],
             'password_verify' => [
-                'required',
+                'notEmpty',
                 'min_length(8)',
             ],
             'sex' => [

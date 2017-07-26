@@ -10,8 +10,8 @@ use Core\Concerns\Authorizable;
 use Core\Responses\UserResponse;
 use Core\Transformer\Transformer;
 use Core\Concerns\Authenticatable;
+use Core\Validator\Rules\UserRegistrationRule;
 use Core\Contracts\Util\Hasher as HasherContract;
-use Core\Validator\Rules\CustomerRegistrationRule;
 use Core\Contracts\Repositories\User as UserRepositoryContract;
 use Core\Contracts\Repositories\Token as TokenRepositoryContract;
 
@@ -59,7 +59,7 @@ class AuthManager
     public function registerUser(array $attributes): UserResponse
     {
         $this->validator
-             ->prepare(CustomerRegistrationRule::class, $attributes)
+             ->prepare(UserRegistrationRule::class, $attributes)
              ->validate();
 
         $user = $this->userRepository->make();
