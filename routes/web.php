@@ -17,7 +17,7 @@ $app->get('/', 'DefaultController@index');
 // Authentication
 $app->post('/auth/login', 'AuthController@login');
 $app->post('/auth/forgot', 'AuthController@forgot');
-$app->post('/auth/register/customer', 'AuthController@customerRegistration');
+$app->post('/auth/register/user', 'AuthController@userRegistration');
 
 // Needs Authorization
 $app->get('/auth/user', ['middleware' => ['auth'], 'uses' => 'AuthController@user']);

@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
             'phone' => '+6211111111111',
             'address' => 'Bogor',
             'sex' => 'M',
-            'role' => 'CST',
+            'role' => 'USR',
             'password' => Hash::make('user')
         ]);
     }

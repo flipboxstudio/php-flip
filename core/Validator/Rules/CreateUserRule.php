@@ -35,12 +35,7 @@ class CreateUserRule extends Rule
                 'required',
                 'in' => $this->generateInValidation([
                     'ADM', // ADMIN
-                    'AGT', // AGENT
-                    'COU', // COURIER
-                    'CST', // CUSTOMER
-                    'CSV', // CUSTOMER SERVICE
-                    'PKP', // PORT KEEPER
-                    'WKP', // WAREHOUSE KEEPER
+                    'USR', // USER
                 ]),
             ],
             'sex' => [

@@ -11,7 +11,7 @@ This project (will) comes with standard routing, such as:
     - `GET /auth/user` (see current authorized user)
     - `POST /auth/forgot` (sending email to reset a password) [WIP]
     - `POST /auth/logout` (purge a token, the purged token will be unusable)
-    - `POST /auth/register/customer` (register new customer)
+    - `POST /auth/register/user` (register new user)
 - Account Management [WIP]
     - `GET /account` (see detail of account)
     - `POST /account` (update an account)

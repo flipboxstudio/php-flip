@@ -84,11 +84,11 @@ class AuthController extends Controller
      *
      * @return Response
      */
-    public function customerRegistration(Request $request)
+    public function userRegistration(Request $request)
     {
         return [
             'message' => 'Successfully registered.',
-            'data' => $this->app->auth()->registerCustomer(
+            'data' => $this->app->auth()->registerUser(
                 $request->all() // TODO: Should use `Request::only($attributes)`
             ),
         ];

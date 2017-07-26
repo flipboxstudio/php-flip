@@ -48,7 +48,7 @@ class AuthManager
     }
 
     /**
-     * Register a customer.
+     * Register a user.
      *
      * @param array $attributes
      *
@@ -56,7 +56,7 @@ class AuthManager
      *
      * @throws \Core\Exceptions\ValidationException
      */
-    public function registerCustomer(array $attributes): UserResponse
+    public function registerUser(array $attributes): UserResponse
     {
         $this->validator
              ->prepare(CustomerRegistrationRule::class, $attributes)
@@ -69,7 +69,7 @@ class AuthManager
         $user->set('phone', $attributes['phone']);
 
         $user->set('password', $this->hasher->make($attributes['password']));
-        $user->set('role', 'CST');
+        $user->set('role', 'USR');
 
         if ($sex = Arr::get($attributes, 'sex')) {
             $user->set('sex', $sex);

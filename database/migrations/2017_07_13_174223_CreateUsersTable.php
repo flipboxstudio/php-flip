@@ -22,13 +22,8 @@ class CreateUsersTable extends Migration
             $table->enum('sex', ['M', 'F'])->nullable();
             $table->enum('role', [
                 'ADM', // ADMIN
-                'AGT', // AGENT
-                'COU', // COURIER
-                'CST', // CUSTOMER
-                'CSV', // CUSTOMER SERVICE
-                'PKP', // PORT KEEPER
-                'WKP', // WAREHOUSE KEEPER
-            ], 'CST');
+                'USR', // USER
+            ], 'USR');
             $table->string('password', 512);
             $table->string('remember_token', 64)->nullable();
             $table->timestamps();
