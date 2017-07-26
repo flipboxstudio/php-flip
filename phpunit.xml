@@ -11,10 +11,10 @@
          syntaxCheck="false">
     <testsuites>
         <testsuite name="Core">
-            <directory suffix="Test.php">./core-tests</directory>
+            <directory>./test/core</directory>
         </testsuite>
         <testsuite name="App">
-            <directory suffix="Test.php">./app-tests</directory>
+            <directory>./test/app</directory>
         </testsuite>
     </testsuites>
     <filter>
