@@ -48,9 +48,27 @@ class AuthTest extends TestCase
      * @expectedException \Core\Exceptions\AuthenticationException
      * @expectedExceptionCode 400
      */
-    public function testFailedAuthentication()
+    public function testFailedAuthenticationWithWrongCredentials()
     {
-        $tokenResponse = $this->auth->authenticate('admin@core.com', 'WrongPasswordInserted');
+        $this->auth->authenticate('admin@core.com', 'WrongPasswordInserted');
+    }
+
+    /**
+     * @expectedException \Core\Exceptions\ValidationException
+     * @expectedExceptionCode 412
+     */
+    public function testFailedAuthenticationWithBothInputsAreEmpty()
+    {
+        $this->auth->authenticate('', '');
+    }
+
+    /**
+     * @expectedException \Core\Exceptions\ValidationException
+     * @expectedExceptionCode 412
+     */
+    public function testFailedAuthenticationInvalidEmail()
+    {
+        $this->auth->authenticate('TisShouldBeAValidEmailAddresss', '');
     }
 
     public function testAuthorization()

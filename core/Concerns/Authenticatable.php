@@ -7,6 +7,7 @@ use DateInterval;
 use Illuminate\Support\Str;
 use Core\Responses\UserResponse;
 use Core\Responses\TokenResponse;
+use Core\Validator\Rules\LoginRule;
 use Core\Exceptions\AuthenticationException;
 use Core\PubSub\Publishers\CustomerForgotTheirPassword;
 
@@ -14,6 +15,11 @@ trait Authenticatable
 {
     public function authenticate(string $email, string $password): TokenResponse
     {
+        $this->validator->prepare(LoginRule::class, [
+            'email' => $email,
+            'password' => $password,
+        ])->validate();
+
         $user = $this->userRepository->findBy('email', $email);
 
         if ($user !== null) {
