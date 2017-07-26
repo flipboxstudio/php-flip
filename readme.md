@@ -4,24 +4,24 @@ PHPFlip is a standard project architecture. It requires PHP 7.1.
 
 ## Available Routing
 
-This project comes with standard routing, such as:
+This project (will) comes with standard routing, such as:
 
 - Authentication and Registration
-    - POST /auth/login (acquire a token for authorization)
-    - GET /auth/user (see current autorized user)
-    - POST /auth/forgot (sending email to reset a password) [WIP]
-    - POST /auth/logout (purge a token, the purged token will be unusable)
-    - POST /auth/register/customer (register new customer)
+    - `POST /auth/login` (acquire a token for authorization)
+    - `GET /auth/user` (see current authorized user)
+    - `POST /auth/forgot` (sending email to reset a password) [WIP]
+    - `POST /auth/logout` (purge a token, the purged token will be unusable)
+    - `POST /auth/register/customer` (register new customer)
 - Account Management [WIP]
-    - GET /account (see detail of account)
-    - POST /account (update an account)
-    - POST /account/password (change account password)
+    - `GET /account` (see detail of account)
+    - `POST /account` (update an account)
+    - `POST /account/password` (change account password)
 - User Management
-    - GET /users (get user list)
-    - POST /users (create new user)
-    - GET /users/{id} (get a user detail)
-    - POST /users/{id} (update a user)
-    - DELETE /users/{id} (delete a user)
+    - `GET /users` (get user list)
+    - `POST /users` (create new user)
+    - `GET /users/{id}` (get a user detail)
+    - `POST /users/{id}` (update a user)
+    - `DELETE /users/{id}` (delete a user)
 
 ## Application Structure
 
