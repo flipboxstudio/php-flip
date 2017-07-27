@@ -15,7 +15,7 @@ This project (will) comes with standard routing, such as:
 - Account Management [WIP]
     - `GET /account` (see detail of account)
     - `POST /account` (update an account)
-    - `POST /account/password` (change account password)
+    - `POST /account/password` (change password for an account)
 - User Management
     - `GET /users` (get user list)
     - `POST /users` (create new user)

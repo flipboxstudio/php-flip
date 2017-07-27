@@ -3,7 +3,7 @@
 namespace Core\PubSub;
 
 use Closure;
-use Exception;
+use Core\Exceptions\EventException;
 use Sabre\Event\Emitter as SabreEventEmitter;
 use Core\PubSub\Publishers\UserHasBeenCreated;
 use Core\Contracts\Container as ContainerContract;
@@ -117,6 +117,6 @@ class Emitter
             return call_user_func_array($subscription, $arguments);
         }
 
-        throw new Exception('Cannot invoke subscription.', 500);
+        throw new EventException('Cannot invoke subscription.', 500);
     }
 }
