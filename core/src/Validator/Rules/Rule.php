@@ -17,4 +17,6 @@ abstract class Rule
             ? $this->attributes[$attribute]
             : ($default ?: null);
     }
+
+    abstract public function rules(): array;
 }

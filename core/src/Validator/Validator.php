@@ -2,6 +2,7 @@
 
 namespace Core\Validator;
 
+use Exception;
 use Core\Exceptions\ValidationException;
 use Core\Contracts\Container as ContainerContract;
 use Illuminate\Validation\Validator as IlluminateValidator;
@@ -46,6 +47,11 @@ class Validator
     {
         $RuleFqn = $this->Rule;
         $rule = new $RuleFqn($this->attributes);
+
+        if (!$rule instanceof Rules\Rule) {
+            throw new Exception('Rule must be an instance of '.Rules\Rule::class.'.');
+        }
+
         $rules = $rule->rules();
 
         $validator = $this->container->make('validator')->make($this->attributes, $rules);
