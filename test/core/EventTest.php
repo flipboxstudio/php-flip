@@ -7,8 +7,8 @@ use Core\PubSub\Emitter;
 use Core\App as CoreApp;
 use Test\Core\PubSub\Publishers\TestPublisher;
 use Core\Contracts\Container as ContainerContract;
-use Test\Core\PubSub\Subscriptions\TestSubscription;
 use Test\Core\PubSub\Publishers\SequentialPublisher;
+use Test\Core\PubSub\Subscriptions\StaticTestSubscription;
 use Test\Core\PubSub\Subscriptions\AnotherTestSubscription;
 
 class EventTest extends TestCase
@@ -47,7 +47,7 @@ class EventTest extends TestCase
     {
         $emitter = app(CoreApp::class)->ioc()->make(Emitter::class);
 
-        $emitter->subscribe(Something\Random\Event::class, [TestSubscription::class, 'callStatic']);
+        $emitter->subscribe(Something\Random\Event::class, [StaticTestSubscription::class, 'callStatic']);
 
         $emitter->emit(Something\Random\Event::class, app(CoreApp::class)->ioc());
 
