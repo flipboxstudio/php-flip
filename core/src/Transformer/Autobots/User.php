@@ -3,15 +3,12 @@
 namespace Core\Transformer\Autobots;
 
 use Core\Responses\UserResponse;
-use Core\Contracts\Models\User as UserModelContract;
 
 class User extends Autobot
 {
-    protected $transformableClass = UserModelContract::class;
-
     protected $responseClass = UserResponse::class;
 
-    protected function gatherResponseConstructorParameters($model): array
+    protected function collectResponseInstanceArgs($model): array
     {
         return [
             $this->transformBasicAttributes($model),

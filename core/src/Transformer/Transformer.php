@@ -26,12 +26,14 @@ class Transformer
         TokenModelContract::class => TokenAutobot::class,
     ];
 
+    protected $assigned = [];
+
     public function __construct(ContainerContract $container)
     {
         $this->container = $container;
     }
 
-    public function register(string $modelName, $autobotName)
+    public function register(string $modelName, string $autobotName)
     {
         $this->autobots[$modelName] = $autobotName;
     }
@@ -41,18 +43,19 @@ class Transformer
         $Autobot = null;
         $method = null;
 
-        if ($this->dataIsCollection($data)) {
+        if ($this->dataIsACollection($data)) {
             $Autobot = $this->determineAutobotFromIteratorAggregate($data);
             $method = 'transformCollection';
-        } elseif ($this->dataIsItem($data)) {
+        } elseif ($this->dataIsAnItem($data)) {
             $Autobot = $this->determineAutobotFromModel($data);
             $method = 'transformItem';
         }
 
         if (!$Autobot || !$method) {
             throw new TransformerException(
-                'Cannot transform type. There is no Autobot assigned for that type.',
-                500
+                'Data is not transformable. There is no Autobot assigned for this data type.',
+                500,
+                $data
             );
         }
 
@@ -62,19 +65,19 @@ class Transformer
         );
     }
 
-    protected function dataIsCollection($data): bool
+    protected function dataIsACollection($data): bool
     {
         return $data instanceof IteratorAggregate;
     }
 
-    protected function dataIsItem($data): bool
+    protected function dataIsAnItem($data): bool
     {
         return $data instanceof ModelContract;
     }
 
-    protected function determineAutobotFromIteratorAggregate(IteratorAggregate $models): ?string
+    protected function determineAutobotFromIteratorAggregate(IteratorAggregate $collection): ?string
     {
-        foreach ($models->getIterator() as $model) {
+        foreach ($collection->getIterator() as $model) {
             return $this->determineAutobotFromModel($model);
         }
 
@@ -83,15 +86,21 @@ class Transformer
 
     protected function determineAutobotFromModel(ModelContract $model): ?string
     {
+        $modelFqn = get_class($model);
+
+        if (array_key_exists($modelFqn, $this->assigned)) {
+            return $this->assigned[$modelFqn];
+        }
+
         $implements = array_intersect(
-            array_keys((new ReflectionClass($model))->getInterfaces()),
+            array_keys((new ReflectionClass($modelFqn))->getInterfaces()),
             array_keys($this->autobots)
         );
 
         if (count($implements) > 0) {
-            return $this->autobots[
-                reset($implements)
-            ];
+            $firstMatchingContract = reset($implements);
+
+            return $this->assigned[$modelFqn] = $this->autobots[$firstMatchingContract];
         }
 
         return null;
@@ -101,27 +110,21 @@ class Transformer
         ModelContract $model,
         AutobotContract $autobot
     ): Fluent {
-        if (!$autobot->canTransform($model)) {
-            $autobotClass = get_class($autobot);
-
-            throw new TransformerException("Autobot [{$autobotClass}] cannot transform that type.", 500);
-        }
-
         return $autobot->transform($model);
     }
 
     protected function transformCollection(
-        IteratorAggregate $models,
+        IteratorAggregate $collection,
         AutobotContract $autobot
     ): Collection {
-        $collection = new Collection();
+        $result = new Collection();
 
-        foreach ($models->getIterator() as $model) {
-            $collection->push(
+        foreach ($collection as $model) {
+            $result->push(
                 $this->transformItem($model, $autobot)
             );
         }
 
-        return $collection;
+        return $result;
     }
 }

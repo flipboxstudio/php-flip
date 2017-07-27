@@ -7,8 +7,6 @@ use Core\Contracts\Models\Token as TokenModelContract;
 
 class Token extends Autobot
 {
-    protected $transformableClass = TokenModelContract::class;
-
     protected $responseClass = TokenResponse::class;
 
     protected $user;
@@ -18,7 +16,7 @@ class Token extends Autobot
         $this->user = $user;
     }
 
-    protected function gatherResponseConstructorParameters($model): array
+    protected function collectResponseInstanceArgs($model): array
     {
         return [
             $this->transformBasicAttributes($model),

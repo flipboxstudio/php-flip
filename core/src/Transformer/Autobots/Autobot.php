@@ -35,8 +35,6 @@ abstract class Autobot implements AutobotContract
 
     protected const NAMING_NONE = 'none';
 
-    protected $transformableClass;
-
     protected $responseClass;
 
     protected static $commonTransformableAttributes = [
@@ -51,13 +49,6 @@ abstract class Autobot implements AutobotContract
             static::$commonTransformableAttributes,
             $atttributes
         );
-    }
-
-    public function canTransform($model): bool
-    {
-        $transformableClass = $this->transformableClass();
-
-        return $model instanceof $transformableClass;
     }
 
     protected function get(ModelContract $model, string $field, string $type, string $as = null): array
@@ -168,16 +159,16 @@ abstract class Autobot implements AutobotContract
 
     public function transform($model): Fluent
     {
-        $ref = new ReflectionClass(
+        $reflectionObject = new ReflectionClass(
             $this->responseClass()
         );
 
-        return $ref->newInstanceArgs(
-            $this->gatherResponseConstructorParameters($model)
+        return $reflectionObject->newInstanceArgs(
+            $this->collectResponseInstanceArgs($model)
         );
     }
 
-    protected function gatherResponseConstructorParameters($model): array
+    protected function collectResponseInstanceArgs($model): array
     {
         throw new Exception('Method not implemented yet.');
     }
@@ -185,18 +176,9 @@ abstract class Autobot implements AutobotContract
     protected function responseClass(): string
     {
         if (!$this->responseClass) {
-            throw new Exception('responseClass property is empty.');
+            throw new Exception('responseClass property is not set.');
         }
 
         return $this->responseClass;
-    }
-
-    protected function transformableClass(): string
-    {
-        if (!$this->transformableClass) {
-            throw new Exception('transformableClass property is empty.');
-        }
-
-        return $this->transformableClass;
     }
 }
