@@ -35,7 +35,7 @@
         ]
     },
     "scripts": {
-        "fixer": [
+        "fix": [
             "php-cs-fixer fix --rules=@Symfony app",
             "php-cs-fixer fix --rules=@Symfony core",
             "php-cs-fixer fix --rules=@Symfony test"
@@ -46,6 +46,14 @@
         "test": [
             "php artisan migrate:refresh --seed",
             "phpunit"
+        ],
+        "test-app": [
+            "php artisan migrate:refresh --seed",
+            "phpunit --testsuite 'App'"
+        ],
+        "test-core": [
+            "php artisan migrate:refresh --seed",
+            "phpunit --testsuite 'Core'"
         ]
     },
     "minimum-stability": "dev",

@@ -103,17 +103,39 @@ php artisan migrate --seed
 ### Testing
 
 ```sh
-composer global remove 'phpunit/phpunit' -vvv # do this if you have installed phpunit which not in version 5.0.*
+composer global remove 'phpunit/phpunit' -vvv
 composer global require 'phpunit/phpunit:^5.0' -vvv
 
 # to test all suites
 phpunit
 
+# or via composer
+composer run-script test
+
+# or simply
+composer test
+
+################################################################################
+
 # or for testing specific core package
 phpunit --testsuite Core
 
+# similay like above but via composer
+composer run-script test-core
+
+# or simply
+composer test-core
+
+################################################################################
+
 # or for testing application
 phpunit --testsuite App
+
+# similay like above but via composer
+composer run-script test-app
+
+# or simply
+composer test-app
 ```
 
 ### Code Fixing
@@ -122,5 +144,8 @@ phpunit --testsuite App
 composer global require friendsofphp/php-cs-fixer -vvv
 
 # in root folder of this project
-composer run-script fixer
+composer run-script fix
+
+# or simply
+composer fix
 ```
