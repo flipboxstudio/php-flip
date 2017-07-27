@@ -42,6 +42,10 @@
         ],
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
+        ],
+        "test": [
+            "php artisan migrate:refresh --seed",
+            "phpunit"
         ]
     },
     "minimum-stability": "dev",

@@ -5,6 +5,7 @@ namespace Core;
 use Closure;
 use RuntimeException;
 use Core\PubSub\Emitter;
+use Core\Validator\Validator;
 use Core\Managers\AuthManager;
 use Core\Managers\UserManager;
 use Core\Contracts\Util\Hasher as HasherContract;
@@ -59,8 +60,12 @@ class App
         $this->checkRequiredBindings();
 
         $this->container->instance(ContainerContract::class, $container);
-        $this->container->singleton(Emitter::class, Emitter::class);
         $this->container->instance(self::class, $this);
+
+        $this->container->singleton(AuthManager::class, AuthManager::class);
+        $this->container->singleton(UserManager::class, UserManager::class);
+        $this->container->singleton(Validator::class, Validator::class);
+        $this->container->singleton(Emitter::class, Emitter::class);
     }
 
     /**
