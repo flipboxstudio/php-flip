@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use IteratorAggregate;
+use Illuminate\Database\Eloquent\Builder;
 use Core\Contracts\Models\Model as CoreModelContract;
 use Core\Contracts\Repositories\Repository as CoreRepositoryContract;
 
@@ -45,12 +46,43 @@ abstract class EloquentRepository implements CoreRepositoryContract
 
     public function search(array $criteria): IteratorAggregate
     {
-        return $this->modelClassName()::where($criteria)->get();
+        $modelFqn = $this->modelClassName();
+
+        return $this->where(
+            new $modelFqn,
+            $criteria
+        )->get();
     }
 
     public function count(array $criteria = []): int
     {
-        return $this->modelClassName()::where($criteria)->count();
+        $modelFqn = $this->modelClassName();
+
+        return $this->where(
+            new $modelFqn,
+            $criteria
+        )->count();
+    }
+
+    protected function where(CoreModelContract $model, array $criteria = []): Builder
+    {
+        foreach ($criteria as $expression) {
+            [$field, $operator, $value] = array_merge($expression, ['', '', '']);
+
+            if (strtoupper($operator) === 'IN') {
+                $model = $model->whereIn($field, $value);
+            } elseif (strtoupper($operator) === 'NIN') {
+                $model = $model->whereNotIn($field, $value);
+            } elseif (strtoupper($operator) === 'ORIN') {
+                $model = $model->orWhereIn($field, $value);
+            } elseif (strtoupper($operator) === 'ORNIN') {
+                $model = $model->orWhereNotIn($field, $value);
+            } else {
+                $model = $model->where($field, $operator, $value);
+            }
+        }
+
+        return $model;
     }
 
     abstract protected function modelClassName(): string;

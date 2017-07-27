@@ -123,7 +123,7 @@ class ValidationTest extends TestCase
         );
 
         $basicValidator = $validator->make(
-            ['email' => ['admin@core.com']],
+            ['email' => ['admin@core.com', 'alfa@flipbox.co.id']],
             ['email' => ['exists:'.UserRepositoryContract::class]]
         );
 

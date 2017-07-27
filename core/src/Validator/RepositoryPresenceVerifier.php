@@ -54,7 +54,7 @@ class RepositoryPresenceVerifier implements PresenceVerifierInterface
     {
         $repository = $this->container->make($collection);
 
-        $criteria = [[$column, '=', $values]];
+        $criteria = [[$column, 'IN', $values]];
 
         return $repository->count($criteria);
     }
