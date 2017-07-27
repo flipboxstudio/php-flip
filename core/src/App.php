@@ -21,10 +21,25 @@ use Core\Contracts\Repositories\Token as TokenRepositoryContract;
  */
 class App
 {
+    /**
+     * Container instance.
+     *
+     * @var ContainerContract
+     */
     protected $container;
 
+    /**
+     * Resolved instances.
+     *
+     * @var array
+     */
     protected $resolved = [];
 
+    /**
+     * Required bindings.
+     *
+     * @var array
+     */
     protected $requiredBindings = [
         HasherContract::class,
         MailerContract::class,
@@ -48,6 +63,14 @@ class App
         $this->container->instance(self::class, $this);
     }
 
+    /**
+     * Make new instance using container modifier.
+     *
+     * @param Closure           $callback
+     * @param ContainerContract $container
+     *
+     * @return App
+     */
     public static function make(Closure $callback, ContainerContract $container = null): App
     {
         return new self(static::createContainer(
@@ -56,21 +79,41 @@ class App
         ));
     }
 
+    /**
+     * Return the container instance.
+     *
+     * @return ContainerContract
+     */
     public function ioc(): ContainerContract
     {
         return $this->container;
     }
 
+    /**
+     * Return the Auth Manager.
+     *
+     * @return AuthManager
+     */
     public function auth(): AuthManager
     {
         return $this->create(AuthManager::class);
     }
 
+    /**
+     * Return the User Manager.
+     *
+     * @return UserManager
+     */
     public function user(): UserManager
     {
         return $this->create(UserManager::class);
     }
 
+    /**
+     * Build an instance.
+     *
+     * @param string $className
+     */
     protected function create(string $className)
     {
         // Caching strategy
@@ -81,6 +124,14 @@ class App
         return $this->resolved[$className] = $this->container->make($className);
     }
 
+    /**
+     * Create container using callback.
+     *
+     * @param Closure           $callback
+     * @param ContainerContract $container
+     *
+     * @return ContainerContract
+     */
     protected static function createContainer(Closure $callback, ContainerContract $container = null): ContainerContract
     {
         return call_user_func_array($callback, [
@@ -88,6 +139,9 @@ class App
         ]);
     }
 
+    /**
+     * Check required bindings.
+     */
     protected function checkRequiredBindings()
     {
         foreach ($this->requiredBindings as $requiredBinding) {

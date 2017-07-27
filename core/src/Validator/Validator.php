@@ -44,7 +44,8 @@ class Validator
 
     protected function boot(): IlluminateValidator
     {
-        $rule = $this->container->makeWith($this->Rule, ['attributes' => $this->attributes]);
+        $RuleFqn = $this->Rule;
+        $rule = new $RuleFqn($this->attributes);
         $rules = $rule->rules();
 
         $validator = $this->container->make('validator')->make($this->attributes, $rules);

@@ -126,9 +126,7 @@ class Container extends IlluminateContainer implements ContainerContract
 
             $validator = $this->make('validator');
 
-            $validator->setPresenceVerifier(
-                $this->make(RepositoryPresenceVerifier::class)
-            );
+            $validator->setPresenceVerifier(new RepositoryPresenceVerifier($this));
 
             return $validator;
         });
@@ -136,6 +134,9 @@ class Container extends IlluminateContainer implements ContainerContract
         $this->alias('validator', 'Illuminate\Contracts\Validation\Factory');
     }
 
+    /**
+     * Register container bindings for the application.
+     */
     protected function registerContainerBindings()
     {
         $this->instance('container', $this);

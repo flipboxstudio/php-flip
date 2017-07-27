@@ -7,19 +7,34 @@ use Illuminate\Validation\PresenceVerifierInterface;
 
 class RepositoryPresenceVerifier implements PresenceVerifierInterface
 {
+    /**
+     * Container instance.
+     *
+     * @var ContainerContract
+     */
     protected $container;
 
+    /**
+     * Connection.
+     *
+     * @var string
+     */
     protected $connection;
 
+    /**
+     * Initialize class.
+     *
+     * @param ContainerContract $container
+     */
     public function __construct(ContainerContract $container)
     {
         $this->container = $container;
     }
 
     /**
-     * Count the number of objects in a collection having the given value.
+     * Count the number of objects in a Repository having the given value.
      *
-     * @param string $collection
+     * @param string $Repository
      * @param string $column
      * @param string $value
      * @param int    $excludeId
@@ -28,9 +43,9 @@ class RepositoryPresenceVerifier implements PresenceVerifierInterface
      *
      * @return int
      */
-    public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null, array $extra = [])
+    public function getCount($Repository, $column, $value, $excludeId = null, $idColumn = null, array $extra = [])
     {
-        $repository = $this->container->make($collection);
+        $repository = $this->container->make($Repository);
         $criteria = [[$column, '=', $value]];
 
         if (!is_null($excludeId) && $excludeId != 'NULL') {
@@ -41,18 +56,18 @@ class RepositoryPresenceVerifier implements PresenceVerifierInterface
     }
 
     /**
-     * Count the number of objects in a collection with the given values.
+     * Count the number of objects in a Repository with the given values.
      *
-     * @param string $collection
+     * @param string $Repository
      * @param string $column
      * @param array  $values
      * @param array  $extra
      *
      * @return int
      */
-    public function getMultiCount($collection, $column, array $values, array $extra = [])
+    public function getMultiCount($Repository, $column, array $values, array $extra = [])
     {
-        $repository = $this->container->make($collection);
+        $repository = $this->container->make($Repository);
 
         $criteria = [[$column, 'IN', $values]];
 
