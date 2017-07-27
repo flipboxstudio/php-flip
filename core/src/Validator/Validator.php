@@ -3,8 +3,8 @@
 namespace Core\Validator;
 
 use Core\Exceptions\ValidationException;
-use SimpleValidator\Validator as SimpleValidator;
 use Core\Contracts\Container as ContainerContract;
+use Illuminate\Validation\Validator as IlluminateValidator;
 
 class Validator
 {
@@ -31,25 +31,23 @@ class Validator
     {
         $validator = $this->boot();
 
-        if ($validator->isSuccess()) {
+        if ($validator->passes()) {
             return true;
         }
 
-        throw new ValidationException('Some attribute(s) fail to pass validation.', 412, $validator->getErrors());
+        throw new ValidationException(
+            'Some attribute(s) fail to pass validation.',
+            412,
+            $validator->errors()->toArray()
+        );
     }
 
-    protected function boot(): SimpleValidator
+    protected function boot(): IlluminateValidator
     {
         $rule = $this->container->makeWith($this->Rule, ['attributes' => $this->attributes]);
         $rules = $rule->rules();
 
-        $validator = SimpleValidator::validate($this->attributes, $rules);
-
-        $validator->customErrors([
-            'unique' => 'The :attribute has already been taken.',
-            'exists' => 'The selected :attribute is invalid.',
-            'in' => 'The selected :attribute is invalid.',
-        ]);
+        $validator = $this->container->make('validator')->make($this->attributes, $rules);
 
         return $validator;
     }

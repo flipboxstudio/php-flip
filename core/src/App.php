@@ -41,11 +41,7 @@ class App
     {
         $this->container = $container;
 
-        foreach ($this->requiredBindings as $requiredBinding) {
-            if (!$this->container->bound($requiredBinding)) {
-                throw new RuntimeException("{$requiredBinding} is not bound to the Container.");
-            }
-        }
+        $this->checkRequiredBindings();
 
         $this->container->instance(ContainerContract::class, $container);
         $this->container->singleton(Emitter::class, Emitter::class);
@@ -58,6 +54,11 @@ class App
             $callback,
             $container
         ));
+    }
+
+    public function ioc(): ContainerContract
+    {
+        return $this->container;
     }
 
     public function auth(): AuthManager
@@ -85,5 +86,14 @@ class App
         return call_user_func_array($callback, [
             $container = ($container === null) ? new Container() : $container,
         ]);
+    }
+
+    protected function checkRequiredBindings()
+    {
+        foreach ($this->requiredBindings as $requiredBinding) {
+            if (!$this->container->bound($requiredBinding)) {
+                throw new RuntimeException("{$requiredBinding} is not bound to the Container.");
+            }
+        }
     }
 }

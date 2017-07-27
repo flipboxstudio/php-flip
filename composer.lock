@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8d0e031ddebb72ead32fc644407acb0c",
-    "content-hash": "688a66ba8a814830660b8b985b3c1c38",
+    "hash": "776c55aa9a80255fdf7dcab7539e55d2",
+    "content-hash": "3d01d30f21c41a5eab8fef0200d4d376",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -1994,19 +1994,20 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.23",
+            "version": "v5.2.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "7115df4a6f76281109ebe352900c42403b728bb4"
+                "reference": "22d04c6a58145a244696f3f254c1875aa653b26a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/7115df4a6f76281109ebe352900c42403b728bb4",
-                "reference": "7115df4a6f76281109ebe352900c42403b728bb4",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/22d04c6a58145a244696f3f254c1875aa653b26a",
+                "reference": "22d04c6a58145a244696f3f254c1875aa653b26a",
                 "shasum": ""
             },
             "require": {
+                "ext-ctype": "*",
                 "php": ">=5.0.0"
             },
             "require-dev": {
@@ -2066,7 +2067,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-03-15 19:32:56"
+            "time": "2017-07-26 21:00:20"
         },
         {
             "name": "phpspec/prophecy",
@@ -3213,42 +3214,6 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2016-10-03 07:35:21"
-        },
-        {
-            "name": "simple-validator/simple-validator",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cangelis/simple-validator.git",
-                "reference": "87aabf6a667cbea92efc2f88e2eea2a4121a6472"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cangelis/simple-validator/zipball/87aabf6a667cbea92efc2f88e2eea2a4121a6472",
-                "reference": "87aabf6a667cbea92efc2f88e2eea2a4121a6472",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "SimpleValidator\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Can Gelis",
-                    "email": "geliscan@gmail.com"
-                }
-            ],
-            "description": "Yet another validation class for PHP",
-            "time": "2017-06-29 10:09:43"
         },
         {
             "name": "spatie/array-to-xml",

@@ -8,6 +8,11 @@ use Core\Contracts\Repositories\Repository as CoreRepositoryContract;
 
 abstract class EloquentRepository implements CoreRepositoryContract
 {
+    public function primaryKey(): string
+    {
+        return $this->modelClassName()::primaryKey();
+    }
+
     public function save(CoreModelContract $model)
     {
         $model->save();
@@ -36,6 +41,16 @@ abstract class EloquentRepository implements CoreRepositoryContract
     public function make(): ?CoreModelContract
     {
         return $this->modelClassName()::make([]);
+    }
+
+    public function search(array $criteria): IteratorAggregate
+    {
+        return $this->modelClassName()::where($criteria)->get();
+    }
+
+    public function count(array $criteria = []): int
+    {
+        return $this->modelClassName()::where($criteria)->count();
     }
 
     abstract protected function modelClassName(): string;

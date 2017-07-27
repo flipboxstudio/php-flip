@@ -31,7 +31,7 @@ class Mailer implements MailerContract
         string $content,
         array $cc = [],
         array $bcc = []
-    ) : bool {
+    ): bool {
         $this->mail->setFrom($fromAddress, $fromName);
 
         foreach ($to as $toAddress => $toName) {
@@ -62,7 +62,7 @@ class Mailer implements MailerContract
         return $success;
     }
 
-    public function error() : array
+    public function error(): array
     {
         return $this->errors;
     }

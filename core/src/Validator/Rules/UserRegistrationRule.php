@@ -4,7 +4,7 @@ namespace Core\Validator\Rules;
 
 use Core\Contracts\Repositories\User as UserRepository;
 
-class CreateUserRule extends Rule
+class UserRegistrationRule extends Rule
 {
     public function rules(): array
     {
@@ -12,34 +12,41 @@ class CreateUserRule extends Rule
             'name' => [
                 'required',
                 'alpha',
-                'max_length(128)',
+                'max:128',
             ],
             'email' => [
                 'required',
                 'email',
-                'max_length(64)',
-                'unique(email)' => $this->generateUniqueValidation(
-                    $this->container->make(UserRepository::class)
-                ),
+                'max:64',
+                'unique:'.UserRepository::class.',email',
             ],
             'phone' => [
                 'required',
-                'alpha_numeric',
-                'max_length(16)',
+                'alpha_num',
+                'max:16',
             ],
             'address' => [
                 'required',
-                'max_length(512)',
+                'max:512',
             ],
             'role' => [
                 'required',
-                'in' => $this->generateInValidation([
+                'in:'.implode(',', [
                     'ADM', // ADMIN
                     'USR', // USER
                 ]),
             ],
             'sex' => [
-                'in' => $this->generateInValidation(['M', 'F']),
+                'in:'.implode(',', ['M', 'F']),
+            ],
+            'password' => [
+                'required',
+                'min:8',
+                'confirmed',
+            ],
+            'password_confirmation' => [
+                'required',
+                'min:8',
             ],
         ];
     }
