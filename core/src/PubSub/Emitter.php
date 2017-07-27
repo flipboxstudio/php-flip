@@ -9,6 +9,7 @@ use Core\PubSub\Publishers\UserHasBeenCreated;
 use Core\Contracts\Container as ContainerContract;
 use Core\PubSub\Publishers\CustomerHasBeenRegistered;
 use Core\PubSub\Publishers\CustomerForgotTheirPassword;
+use Core\Contracts\PubSub\Publisher as PublisherContract;
 
 class Emitter
 {
@@ -32,8 +33,10 @@ class Emitter
 
     public function emit(string $eventName, ...$arguments)
     {
-        if ($this->shouldRegisterSubscriptions($eventName)) {
-            $this->registerEvent($eventName);
+        if ($this->shouldRegisterSubscribers($eventName)) {
+            $this->register(
+                $this->container->make($eventName)
+            );
         }
 
         $this->emitter->emit($eventName, $arguments);
@@ -42,6 +45,18 @@ class Emitter
     public function subscribe(string $eventName, $handler, int $priority = 100)
     {
         $this->emitter->on($eventName, $this->factory($handler), $priority);
+    }
+
+    public function register(PublisherContract $event)
+    {
+        // Insert this event name, so we know that it's subscribers has been registered
+        $this->registered[] = $eventName = get_class($event);
+
+        // Iterate over events subscribers
+        foreach ($event->subscribers() as $subscriptionName => $priority) {
+            // Register event to the emitter
+            $this->subscribe($eventName, $subscriptionName, $priority);
+        }
     }
 
     protected function factory($handler): Closure
@@ -64,7 +79,7 @@ class Emitter
         }
 
         // Handler is:
-        // Class that has:
+        // Class (string) that has:
         // - `call` method
         // - `fire` method
         // - `trigger` method
@@ -76,25 +91,10 @@ class Emitter
         }
     }
 
-    protected function shouldRegisterSubscriptions(string $eventName): bool
+    protected function shouldRegisterSubscribers(string $eventName): bool
     {
         return !in_array($eventName, $this->registered) && // the subscribers not registered yet
                 in_array($eventName, $this->events); // event registered
-    }
-
-    protected function registerEvent(string $eventName)
-    {
-        // Insert this event name, so we know that it's subscribers has been registered
-        $this->registered[] = $eventName;
-
-        // Create event instance
-        $event = new $eventName();
-
-        // Iterate over events subscribers
-        foreach ($event->subscribers() as $subscriptionName => $priority) {
-            // Register event to the emitter
-            $this->subscribe($eventName, $subscriptionName, $priority);
-        }
     }
 
     protected function triggerSubscriber(string $subscriptionName, array $arguments)
