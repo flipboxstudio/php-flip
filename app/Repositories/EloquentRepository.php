@@ -49,7 +49,7 @@ abstract class EloquentRepository implements CoreRepositoryContract
         $modelFqn = $this->modelClassName();
 
         return $this->where(
-            new $modelFqn,
+            new $this->modelClassName(),
             $criteria
         )->get();
     }
@@ -59,7 +59,7 @@ abstract class EloquentRepository implements CoreRepositoryContract
         $modelFqn = $this->modelClassName();
 
         return $this->where(
-            new $modelFqn,
+            new $modelFqn(),
             $criteria
         )->count();
     }
