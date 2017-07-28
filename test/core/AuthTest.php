@@ -39,8 +39,14 @@ class AuthTest extends TestCase
 
         $this->assertInstanceOf(
             UserModelContract::class,
-            $tokenResponse->getUser(),
+            $user = $tokenResponse->getUser(),
             'Implementation of '.UserModelContract::class.' is not an instance of '.UserModelContract::class.'.'
+        );
+
+        $this->assertEquals(
+            $user->get('email'),
+            'admin@core.com',
+            'Owner of the token should be the same with credentials.'
         );
     }
 
@@ -66,7 +72,7 @@ class AuthTest extends TestCase
      * @expectedException \Core\Exceptions\ValidationException
      * @expectedExceptionCode 412
      */
-    public function testFailedAuthenticationInvalidEmail()
+    public function testFailedAuthenticationWithInvalidEmail()
     {
         $this->auth->authenticate('TisShouldBeAValidEmailAddresss', '');
     }

@@ -2,9 +2,10 @@
 
 namespace Test\Core;
 
-use Core\Managers;
 use Test\TestCase;
 use Core\App as CoreApp;
+use Core\Managers\AuthManager;
+use Core\Managers\UserManager;
 
 class CoreTest extends TestCase
 {
@@ -20,18 +21,18 @@ class CoreTest extends TestCase
     public function testAuthManagerInstance()
     {
         $this->assertInstanceOf(
-            Managers\AuthManager::class,
+            AuthManager::class,
             app(CoreApp::class)->auth(),
-            'Implementation of '.Managers\AuthManager::class.' is not an instance of '.Managers\AuthManager::class.'.'
+            'Implementation of '.AuthManager::class.' is not an instance of '.AuthManager::class.'.'
         );
     }
 
     public function testUserManagerInstance()
     {
         $this->assertInstanceOf(
-            Managers\UserManager::class,
+            UserManager::class,
             app(CoreApp::class)->user(),
-            'Implementation of '.Managers\UserManager::class.' is not an instance of '.Managers\UserManager::class.'.'
+            'Implementation of '.UserManager::class.' is not an instance of '.UserManager::class.'.'
         );
     }
 }
