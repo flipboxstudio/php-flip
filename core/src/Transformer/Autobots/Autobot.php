@@ -17,7 +17,7 @@ use Core\Contracts\Transformer\Autobot as AutobotContract;
 
 abstract class Autobot implements AutobotContract
 {
-    public static $namingStrategy = 'none';
+    public static $namingStrategy = self::NAMING_NONE;
 
     public const TYPE_INT = 'toInt';
 
@@ -45,7 +45,7 @@ abstract class Autobot implements AutobotContract
         ['updated_at', self::TYPE_DATETIME],
     ];
 
-    public function transform($model): Fluent
+    public function transform(ModelContract $model): Fluent
     {
         $reflectionObject = new ReflectionClass(
             $this->responseClass()
@@ -141,7 +141,7 @@ abstract class Autobot implements AutobotContract
 
     protected function resolveNaming(string $name, string $namingStrategy): string
     {
-        if ($namingStrategy === 'none') {
+        if ($namingStrategy === self::NAMING_NONE) {
             return $name;
         }
 
@@ -171,7 +171,7 @@ abstract class Autobot implements AutobotContract
         throw new Exception('Method not implemented yet.');
     }
 
-    protected function collectResponseInstanceArgs($model): array
+    protected function collectResponseInstanceArgs(ModelContract $model): array
     {
         throw new Exception('Method not implemented yet.');
     }

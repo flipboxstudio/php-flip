@@ -3,12 +3,13 @@
 namespace Core\Transformer\Autobots;
 
 use Core\Responses\UserResponse;
+use Core\Contracts\Models\Model as ModelContract;
 
 class UserAutobot extends Autobot
 {
     protected $responseClass = UserResponse::class;
 
-    protected function collectResponseInstanceArgs($model): array
+    protected function collectResponseInstanceArgs(ModelContract $model): array
     {
         return [
             $this->transformBasicAttributes($model),

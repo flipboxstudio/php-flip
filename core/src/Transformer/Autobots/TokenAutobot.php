@@ -3,6 +3,7 @@
 namespace Core\Transformer\Autobots;
 
 use Core\Responses\TokenResponse;
+use Core\Contracts\Models\Model as ModelContract;
 use Core\Contracts\Models\Token as TokenModelContract;
 
 class TokenAutobot extends Autobot
@@ -16,7 +17,7 @@ class TokenAutobot extends Autobot
         $this->user = $user;
     }
 
-    protected function collectResponseInstanceArgs($model): array
+    protected function collectResponseInstanceArgs(ModelContract $model): array
     {
         return [
             $this->transformBasicAttributes($model),
