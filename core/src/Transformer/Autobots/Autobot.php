@@ -147,7 +147,7 @@ abstract class Autobot implements AutobotContract
             list($field, $type) = $attribute;
             $as = $this->resolveNaming($field);
             $merge = ($type instanceof Closure || is_callable($type))
-                ? [ $as => call_user_func_array($type, [$model]) ]
+                ? [$as => call_user_func_array($type, [$model])]
                 : $this->get($model, $field, $type, $as);
             $attributes = array_merge($attributes, $merge);
         }

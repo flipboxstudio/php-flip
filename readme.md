@@ -69,6 +69,18 @@ This project (will) comes with standard routing, such as:
 
 PHPFlip has a rigid rules about how to adding new components.
 
+### Using Validator
+`[Documentation WIP]`
+
+### Using Transformer
+`[Documentation WIP]`
+
+#### About Autobot
+`[Documentation WIP]`
+
+### Using Presenter
+`[Documentation WIP]`
+
 ### Adding New Feature
 
 Here's what you need to do if you want to add new feature:

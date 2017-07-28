@@ -3,21 +3,22 @@
 namespace Core\Validator;
 
 use Exception;
+use Core\Validator\Rules\Rule;
 use Core\Exceptions\ValidationException;
-use Core\Contracts\Container as ContainerContract;
 use Illuminate\Validation\Validator as IlluminateValidator;
+use Illuminate\Contracts\Validation\Factory as IlluminateValidatorFactory;
 
 class Validator
 {
     protected $attributes = [];
 
-    protected $container;
-
     protected $Rule;
 
-    public function __construct(ContainerContract $container)
+    protected $validator;
+
+    public function __construct(IlluminateValidatorFactory $validator)
     {
-        $this->container = $container;
+        $this->validator = $validator;
     }
 
     public function prepare(string $Rule, array $attributes): Validator
@@ -48,13 +49,13 @@ class Validator
         $RuleFqn = $this->Rule;
         $rule = new $RuleFqn($this->attributes);
 
-        if (!$rule instanceof Rules\Rule) {
-            throw new Exception('Rule must be an instance of '.Rules\Rule::class.'.');
+        if (!$rule instanceof Rule) {
+            throw new Exception('Rule must be an instance of '.Rule::class.'.');
         }
 
         $rules = $rule->rules();
 
-        $validator = $this->container->make('validator')->make($this->attributes, $rules);
+        $validator = $this->validator->make($this->attributes, $rules);
 
         return $validator;
     }

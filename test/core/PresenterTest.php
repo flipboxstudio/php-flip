@@ -42,7 +42,7 @@ class PresenterTest extends TestCase
 
         $this->assertEquals(
             $transformed->using(JSONPresenter::class)->present(),
-            json_encode([ 'id' => 123, 'name' => 'Anu Gemes' ])
+            json_encode(['id' => 123, 'name' => 'Anu Gemes'])
         );
 
         libxml_use_internal_errors(true);
