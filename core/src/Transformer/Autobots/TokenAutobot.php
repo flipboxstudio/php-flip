@@ -5,13 +5,13 @@ namespace Core\Transformer\Autobots;
 use Core\Responses\TokenResponse;
 use Core\Contracts\Models\Token as TokenModelContract;
 
-class Token extends Autobot
+class TokenAutobot extends Autobot
 {
     protected $responseClass = TokenResponse::class;
 
     protected $user;
 
-    public function __construct(User $user)
+    public function __construct(UserAutobot $user)
     {
         $this->user = $user;
     }

@@ -7,11 +7,11 @@ use IteratorAggregate;
 use Core\Util\Data\Fluent;
 use Core\Util\Data\Collection;
 use Core\Exceptions\TransformerException;
+use Core\Transformer\Autobots\UserAutobot;
+use Core\Transformer\Autobots\TokenAutobot;
 use Illuminate\Contracts\Support\Arrayable;
 use Core\Contracts\Models\Model as ModelContract;
 use Core\Contracts\Container as ContainerContract;
-use Core\Transformer\Autobots\User as UserAutobot;
-use Core\Transformer\Autobots\Token as TokenAutobot;
 use Core\Contracts\Models\User as UserModelContract;
 use Core\Contracts\Models\Token as TokenModelContract;
 use Core\Contracts\Transformer\Autobot as AutobotContract;
@@ -87,6 +87,10 @@ class Transformer
     protected function determineAutobotFromModel(ModelContract $model): ?string
     {
         $modelFqn = get_class($model);
+
+        if (array_key_exists($modelFqn, $this->autobots)) {
+            return $this->autobots[$modelFqn];
+        }
 
         if (array_key_exists($modelFqn, $this->assigned)) {
             return $this->assigned[$modelFqn];

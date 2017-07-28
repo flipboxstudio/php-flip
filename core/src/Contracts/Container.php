@@ -55,4 +55,14 @@ interface Container
      * @return mixed
      */
     public function make($abstract);
+
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param string $abstract
+     * @param array  $parameters
+     *
+     * @return mixed
+     */
+    public function makeWith($abstract, array $parameters);
 }

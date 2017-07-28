@@ -17,6 +17,8 @@ use Core\Contracts\Transformer\Autobot as AutobotContract;
 
 abstract class Autobot implements AutobotContract
 {
+    public static $namingStrategy = 'none';
+
     public const TYPE_INT = 'toInt';
 
     public const TYPE_FLOAT = 'toFloat';
@@ -27,13 +29,13 @@ abstract class Autobot implements AutobotContract
 
     public const TYPE_DATETIME = 'toDatetime';
 
-    protected const NAMING_CAMEL = 'camel';
+    public const NAMING_CAMEL = 'camel';
 
-    protected const NAMING_STUDLY = 'studly';
+    public const NAMING_STUDLY = 'studly';
 
-    protected const NAMING_SNAKE = 'snake';
+    public const NAMING_SNAKE = 'snake';
 
-    protected const NAMING_NONE = 'none';
+    public const NAMING_NONE = 'none';
 
     protected $responseClass;
 
@@ -42,6 +44,17 @@ abstract class Autobot implements AutobotContract
         ['created_at', self::TYPE_DATETIME],
         ['updated_at', self::TYPE_DATETIME],
     ];
+
+    public function transform($model): Fluent
+    {
+        $reflectionObject = new ReflectionClass(
+            $this->responseClass()
+        );
+
+        return $reflectionObject->newInstanceArgs(
+            $this->collectResponseInstanceArgs($model)
+        );
+    }
 
     public static function register(array $atttributes)
     {
@@ -104,8 +117,9 @@ abstract class Autobot implements AutobotContract
 
     protected function transformBasicAttributes(
         ModelContract $model,
-        string $namingStrategy = self::NAMING_NONE
+        string $namingStrategy = null
     ): array {
+        $namingStrategy = $namingStrategy ?? static::$namingStrategy;
         $attributes = [];
 
         foreach ($this->basicAttribute() as $attribute) {
@@ -155,17 +169,6 @@ abstract class Autobot implements AutobotContract
     protected function basicAttribute(): array
     {
         throw new Exception('Method not implemented yet.');
-    }
-
-    public function transform($model): Fluent
-    {
-        $reflectionObject = new ReflectionClass(
-            $this->responseClass()
-        );
-
-        return $reflectionObject->newInstanceArgs(
-            $this->collectResponseInstanceArgs($model)
-        );
     }
 
     protected function collectResponseInstanceArgs($model): array

@@ -4,7 +4,7 @@ namespace Core\Transformer\Autobots;
 
 use Core\Responses\UserResponse;
 
-class User extends Autobot
+class UserAutobot extends Autobot
 {
     protected $responseClass = UserResponse::class;
 
