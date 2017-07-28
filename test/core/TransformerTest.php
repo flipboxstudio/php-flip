@@ -17,7 +17,6 @@ class TransformerTest extends TestCase
     {
         $app = app(CoreApp::class);
         $ioc = $app->ioc();
-
         $transformer = $ioc->make(Transformer::class);
 
         $this->assertInstanceOf(
@@ -61,7 +60,6 @@ class TransformerTest extends TestCase
     {
         $app = app(CoreApp::class);
         $ioc = $app->ioc();
-
         $transformer = $ioc->make(Transformer::class);
 
         $transformer->register(
@@ -99,7 +97,6 @@ class TransformerTest extends TestCase
     {
         $app = app(CoreApp::class);
         $ioc = $app->ioc();
-
         $transformer = $ioc->make(Transformer::class);
 
         $transformer->register(

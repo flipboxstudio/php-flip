@@ -10,7 +10,7 @@ use Core\Util\Data\Collection;
 use Spatie\ArrayToXml\ArrayToXml;
 use Core\Contracts\Util\Presenter as PresenterContract;
 
-class XML implements PresenterContract
+class XMLPresenter implements PresenterContract
 {
     public function present($data)
     {

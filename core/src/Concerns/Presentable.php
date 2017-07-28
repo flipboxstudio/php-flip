@@ -8,7 +8,7 @@ trait Presentable
 {
     protected $Presenter;
 
-    public function as(string $Presenter)
+    public function using(string $Presenter)
     {
         $this->Presenter = $Presenter;
 
@@ -18,7 +18,7 @@ trait Presentable
     public function present()
     {
         if (!$this->Presenter) {
-            throw new LogicException('Presenter not set, use `as` method.', 500);
+            throw new LogicException('Presenter not set, use `using` method.', 500);
         }
 
         $presenter = new $this->Presenter();

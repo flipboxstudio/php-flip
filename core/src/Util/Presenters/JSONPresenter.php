@@ -4,7 +4,7 @@ namespace Core\Util\Presenters;
 
 use Core\Contracts\Util\Presenter as PresenterContract;
 
-class JSON implements PresenterContract
+class JSONPresenter implements PresenterContract
 {
     public function present($data)
     {
