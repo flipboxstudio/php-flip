@@ -17,7 +17,9 @@ use Core\Contracts\Transformer\Autobot as AutobotContract;
 
 abstract class Autobot implements AutobotContract
 {
-    public static $namingStrategy = self::NAMING_NONE;
+    public static $namingStrategy = self::NAMING_SNAKE;
+
+    public static $sortStrategy = self::SORT_ALPHA;
 
     public const TYPE_INT = 'toInt';
 
@@ -36,6 +38,10 @@ abstract class Autobot implements AutobotContract
     public const NAMING_SNAKE = 'snake';
 
     public const NAMING_NONE = 'none';
+
+    public const SORT_NONE = 'none';
+
+    public const SORT_ALPHA = 'alpha';
 
     protected $responseClass;
 
@@ -64,10 +70,19 @@ abstract class Autobot implements AutobotContract
         );
     }
 
+    protected function sort(array $data): array
+    {
+        return Arr::sort($data, function ($key, $value) {
+            return $key;
+        });
+    }
+
     protected function get(ModelContract $model, string $field, string $type, string $as = null): array
     {
+        $as = $as ?? $this->resolveNaming($field);
+
         return [
-            $as ?: $field => call_user_func_array(
+            $as => call_user_func_array(
                 [$this, $type],
                 [$model->get($field)]
             ),
@@ -94,11 +109,19 @@ abstract class Autobot implements AutobotContract
 
     protected function toDouble($input)
     {
+        if (is_double($input)) {
+            return $input;
+        }
+
         return (float) $input;
     }
 
     protected function toString($input)
     {
+        if (is_string($input)) {
+            return $input;
+        }
+
         return (string) $input;
     }
 
@@ -116,40 +139,33 @@ abstract class Autobot implements AutobotContract
     }
 
     protected function transformBasicAttributes(
-        ModelContract $model,
-        string $namingStrategy = null
+        ModelContract $model
     ): array {
-        $namingStrategy = $namingStrategy ?? static::$namingStrategy;
         $attributes = [];
 
-        foreach ($this->basicAttribute() as $attribute) {
+        foreach ($this->sort($this->basicAttribute()) as $attribute) {
             list($field, $type) = $attribute;
-
-            $responseProperty = $this->resolveNaming($field, $namingStrategy);
-
-            if ($type instanceof Closure || is_callable($type)) {
-                $attributes = $attributes + [
-                    $responseProperty => call_user_func_array($type, [$model]),
-                ];
-            } else {
-                $attributes = $attributes + $this->get($model, $field, $type, $responseProperty);
-            }
+            $as = $this->resolveNaming($field);
+            $merge = ($type instanceof Closure || is_callable($type))
+                ? [ $as => call_user_func_array($type, [$model]) ]
+                : $this->get($model, $field, $type, $as);
+            $attributes = array_merge($attributes, $merge);
         }
 
         return $attributes;
     }
 
-    protected function resolveNaming(string $name, string $namingStrategy): string
+    protected function resolveNaming(string $name): string
     {
-        if ($namingStrategy === self::NAMING_NONE) {
+        if (static::$namingStrategy === self::NAMING_NONE) {
             return $name;
         }
 
-        if (!method_exists(Str::class, $namingStrategy)) {
+        if (!method_exists(Str::class, static::$namingStrategy)) {
             throw new InvalidArgumentException('Invalid naming strategy.', 500);
         }
 
-        return Str::{$namingStrategy}($name);
+        return Str::{static::$namingStrategy}($name);
     }
 
     protected function commonAttribute(array $pick, array $additionalAttributes = []): array
@@ -179,7 +195,7 @@ abstract class Autobot implements AutobotContract
     protected function responseClass(): string
     {
         if (!$this->responseClass) {
-            throw new Exception('responseClass property is not set.');
+            throw new Exception('`responseClass` property is not set.');
         }
 
         return $this->responseClass;

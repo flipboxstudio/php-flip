@@ -9,6 +9,7 @@ use Test\Core\Models\TestModel;
 use Core\Transformer\Transformer;
 use Test\Core\Autobots\TestAutobot;
 use Test\Core\Models\AdvanceTestModel;
+use Test\Core\Autobots\SortedTestAutobot;
 use Test\Core\Autobots\AdvanceTestAutobot;
 
 class TransformerTest extends TestCase
@@ -34,6 +35,7 @@ class TransformerTest extends TestCase
 
         $model->set('id', '123');
         $model->set('name', 'Anu Gemes');
+        $model->set('hidden', 'SecretPassword');
 
         $transformed = $transformer->transform($model);
 
@@ -51,6 +53,34 @@ class TransformerTest extends TestCase
 
         $this->assertEquals(
             ['id' => 123, 'name' => 'Anu Gemes'],
+            $array,
+            'Is valid data structure.'
+        );
+    }
+
+    public function testAutoSortTransformation()
+    {
+        $app = app(CoreApp::class);
+        $ioc = $app->ioc();
+        $transformer = $ioc->make(Transformer::class);
+
+        $transformer->register(
+            TestModel::class,
+            SortedTestAutobot::class
+        );
+
+        $model = new TestModel();
+
+        $model->set('z', '3');
+        $model->set('y', '2');
+        $model->set('x', '1');
+
+        $transformed = $transformer->transform($model);
+
+        $array = $transformed->toArray();
+
+        $this->assertEquals(
+            ['x' => 1, 'y' => 2, 'z' => 3],
             $array,
             'Is valid data structure.'
         );
