@@ -12,6 +12,7 @@ use Core\Contracts\Util\Hasher as HasherContract;
 use Core\Contracts\Container as ContainerContract;
 use Core\Contracts\Infrastructure\Mailer as MailerContract;
 use Core\Contracts\Repositories\User as UserRepositoryContract;
+use Illuminate\Contracts\Validation\Factory as ValidatorContract;
 use Core\Contracts\Repositories\Token as TokenRepositoryContract;
 
 /**
@@ -161,6 +162,7 @@ class App
     {
         $this->container->instance(ContainerContract::class, $this->container);
         $this->container->instance(self::class, $this);
+        $this->container->singleton(self::class);
         $this->container->alias('core', self::class);
 
         $this->container->singleton(AuthManager::class, AuthManager::class);
@@ -170,7 +172,7 @@ class App
         $this->container->alias(UserManager::class, 'core.manager.user');
 
         $this->container->singleton(Validator::class, Validator::class);
-        $this->container->alias(Validator::class, 'core.validator');
+        $this->container->alias(ValidatorContract::class, 'core.validator');
 
         $this->container->singleton(Emitter::class, Emitter::class);
         $this->container->alias(Emitter::class, 'core.emitter');

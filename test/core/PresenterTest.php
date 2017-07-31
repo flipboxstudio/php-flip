@@ -3,7 +3,6 @@
 namespace Test\Core;
 
 use Test\TestCase;
-use Core\App as CoreApp;
 use Test\Core\Models\TestModel;
 use Core\Transformer\Transformer;
 use Test\Core\Autobots\TestAutobot;
@@ -14,9 +13,7 @@ class PresenterTest extends TestCase
 {
     public function testPresenter()
     {
-        $app = app(CoreApp::class);
-        $ioc = $app->ioc();
-        $transformer = $ioc->make(Transformer::class);
+        $transformer = $this->core->ioc(Transformer::class);
 
         $transformer->register(
             TestModel::class,

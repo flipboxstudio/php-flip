@@ -3,7 +3,6 @@
 namespace Test\Core;
 
 use Test\TestCase;
-use Core\App as CoreApp;
 use Core\Util\Data\Collection;
 use Test\Core\Models\TestModel;
 use Core\Transformer\Transformer;
@@ -16,9 +15,7 @@ class TransformerTest extends TestCase
 {
     public function testBasicTransformation()
     {
-        $app = app(CoreApp::class);
-        $ioc = $app->ioc();
-        $transformer = $ioc->make(Transformer::class);
+        $transformer = $this->core->ioc(Transformer::class);
 
         $this->assertInstanceOf(
             Transformer::class,
@@ -60,9 +57,7 @@ class TransformerTest extends TestCase
 
     public function testAutoSortTransformation()
     {
-        $app = app(CoreApp::class);
-        $ioc = $app->ioc();
-        $transformer = $ioc->make(Transformer::class);
+        $transformer = $this->core->ioc(Transformer::class);
 
         $transformer->register(
             TestModel::class,
@@ -88,9 +83,7 @@ class TransformerTest extends TestCase
 
     public function testCollectionTransformation()
     {
-        $app = app(CoreApp::class);
-        $ioc = $app->ioc();
-        $transformer = $ioc->make(Transformer::class);
+        $transformer = $this->core->ioc(Transformer::class);
 
         $transformer->register(
             TestModel::class,
@@ -125,9 +118,7 @@ class TransformerTest extends TestCase
 
     public function testAdvanceTransformation()
     {
-        $app = app(CoreApp::class);
-        $ioc = $app->ioc();
-        $transformer = $ioc->make(Transformer::class);
+        $transformer = $this->core->ioc(Transformer::class);
 
         $transformer->register(
             AdvanceTestModel::class,

@@ -13,7 +13,7 @@ class CoreTest extends TestCase
     {
         $this->assertInstanceOf(
             CoreApp::class,
-            app(CoreApp::class),
+            $this->core,
             'Implementation of '.CoreApp::class.' is not an instance of '.CoreApp::class.'.'
         );
     }
@@ -31,7 +31,7 @@ class CoreTest extends TestCase
     {
         $this->assertInstanceOf(
             AuthManager::class,
-            app(CoreApp::class)->auth(),
+            $this->core->auth(),
             'Implementation of '.AuthManager::class.' is not an instance of '.AuthManager::class.'.'
         );
     }
@@ -70,7 +70,7 @@ class CoreTest extends TestCase
     {
         $this->assertInstanceOf(
             UserManager::class,
-            app(CoreApp::class)->user(),
+            $this->core->user(),
             'Implementation of '.UserManager::class.' is not an instance of '.UserManager::class.'.'
         );
     }

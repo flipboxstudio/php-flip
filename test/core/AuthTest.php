@@ -3,22 +3,18 @@
 namespace Test\Core;
 
 use Test\TestCase;
-use Core\App as CoreApp;
 use Core\Responses\UserResponse;
 use Core\Responses\TokenResponse;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use Core\Contracts\Models\User as UserModelContract;
 use Core\Contracts\Models\Token as TokenModelContract;
 
 class AuthTest extends TestCase
 {
-    use DatabaseMigrations;
-
     protected $auth;
 
     public function setUp()
     {
-        $this->auth = app(CoreApp::class)->auth();
+        $this->auth = app('core')->auth();
     }
 
     public function testAuthentication()

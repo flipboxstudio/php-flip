@@ -2,10 +2,13 @@
 
 namespace Test;
 
+use Core\App as CoreApp;
 use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 
 abstract class TestCase extends LumenTestCase
 {
+    protected $core;
+
     /**
      * Creates the application.
      *
@@ -13,6 +16,10 @@ abstract class TestCase extends LumenTestCase
      */
     public function createApplication()
     {
-        return require __DIR__.'/../bootstrap/app.php';
+        $app = require __DIR__.'/../bootstrap/app.php';
+
+        $this->core = $app->make(CoreApp::class);
+
+        return $app;
     }
 }
