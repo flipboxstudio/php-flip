@@ -6,6 +6,7 @@ use ReflectionClass;
 use IteratorAggregate;
 use Core\Util\Data\Fluent;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 use Core\Util\Data\Collection;
 use Core\Exceptions\TransformerException;
 use Core\Transformer\Autobots\UserAutobot;
@@ -36,16 +37,22 @@ class Transformer
         $this->container = $container;
     }
 
-    public function once(string $modelName, string $autobotName): Transformer
+    public function once(string $modelName, $autobotName): Transformer
     {
+        $this->validateAutobot($autobotName);
+
         $this->once[$modelName] = $autobotName;
 
         return $this;
     }
 
-    public function register(string $modelName, string $autobotName)
+    public function register(string $modelName, $autobotName): Transformer
     {
+        $this->validateAutobot($autobotName);
+
         $this->autobots[$modelName] = $autobotName;
+
+        return $this;
     }
 
     public function transform($data): Arrayable
@@ -63,16 +70,41 @@ class Transformer
 
         if (!$Autobot || !$method) {
             throw new TransformerException(
-                'Data is not transformable. There is no Autobot assigned for this data type.',
+                'Data cannot be transformed. There is no Autobot assigned for this data type.',
                 500,
                 $data
             );
         }
 
-        return call_user_func_array(
-            [$this, $method],
-            [$data, $this->container->make($Autobot)]
-        );
+        if (is_callable($Autobot)) {
+            // Autobot is a closure, or any public method
+            return call_user_func_array(
+                $Autobot,
+                [$data]
+            );
+        } elseif (is_string($Autobot)) {
+            // Autobot is a string, we can create the instance using container.
+            return $this->{$method}(
+                $data,
+                $this->container->make($Autobot)
+            );
+        } else {
+            throw new TransformerException(
+                'Data cannot be transformed. Cannot gather attributes from assigned Autobot.',
+                500,
+                $data
+            );
+        }
+    }
+
+    protected function validateAutobot($autobotName)
+    {
+        if (!is_string($autobotName) && !is_callable($autobotName)) {
+            throw new InvalidArgumentException(
+                'Autobot must be a class name (string) or something callable',
+                500
+            );
+        }
     }
 
     protected function dataIsACollection($data): bool
@@ -86,7 +118,7 @@ class Transformer
         return $data instanceof ModelContract;
     }
 
-    protected function determineAutobotFromCollection($collection): ?string
+    protected function determineAutobotFromCollection($collection)
     {
         foreach ($collection as $model) {
             return $this->determineAutobotFromModel($model);
@@ -95,14 +127,15 @@ class Transformer
         return null;
     }
 
-    protected function determineAutobotFromModel(ModelContract $model): ?string
+    protected function determineAutobotFromModel(ModelContract $model)
     {
         return $this->determineAutobotFromItsClassNameMapping(get_class($model))
             ?? $this->determineAutobotFromItsContract($model);
     }
 
-    protected function determineAutobotFromItsClassNameMapping(string $modelFqn): ?string
+    protected function determineAutobotFromItsClassNameMapping(string $modelFqn)
     {
+        // Once is a priority
         if (array_key_exists($modelFqn, $this->once)) {
             $autobotName = $this->once[$modelFqn];
 
@@ -111,31 +144,37 @@ class Transformer
             return $autobotName;
         }
 
-        if (array_key_exists($modelFqn, $this->autobots)) {
-            return $this->autobots[$modelFqn];
-        }
-
+        // Using interface mapping, interface to an autobot
         if (array_key_exists($modelFqn, $this->assigned)) {
             return $this->assigned[$modelFqn];
         }
 
+        // Using direct mapping, classname to an autobot
+        if (array_key_exists($modelFqn, $this->autobots)) {
+            return $this->autobots[$modelFqn];
+        }
+
         return null;
     }
 
-    protected function determineAutobotFromItsContract(ModelContract $model): ?string
+    protected function determineAutobotFromItsContract(ModelContract $model)
     {
-        if ($Autobot = $this->determineAutobotFromItsContractMapping($model, $this->once)) {
+        if ($Autobot = $this->determineAutobotFromItsInterfaceMapping($model, $this->once)) {
             return $Autobot;
         }
 
-        if ($Autobot = $this->determineAutobotFromItsContractMapping($model, $this->autobots)) {
+        if ($Autobot = $this->determineAutobotFromItsInterfaceMapping($model, $this->assigned)) {
+            return $Autobot;
+        }
+
+        if ($Autobot = $this->determineAutobotFromItsInterfaceMapping($model, $this->autobots)) {
             return $Autobot;
         }
 
         return null;
     }
 
-    protected function determineAutobotFromItsContractMapping(ModelContract $model, array $mapping): ?string
+    protected function determineAutobotFromItsInterfaceMapping(ModelContract $model, array $mapping)
     {
         $implementedInterfaces = array_intersect(
             array_keys((new ReflectionClass($modelFqn = get_class($model)))->getInterfaces()),

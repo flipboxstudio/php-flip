@@ -3,7 +3,6 @@
 namespace Core\Transformer\Autobots;
 
 use Core\Responses\UserResponse;
-use Core\Contracts\Models\Model as ModelContract;
 
 class UserAutobot extends Autobot
 {

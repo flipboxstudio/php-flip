@@ -4,7 +4,6 @@ namespace Test\Core\Autobots;
 
 use Test\Core\Responses\TestResponse;
 use Core\Transformer\Autobots\Autobot;
-use Core\Contracts\Models\Model as ModelContract;
 
 class AdvanceTestAutobot extends Autobot
 {
