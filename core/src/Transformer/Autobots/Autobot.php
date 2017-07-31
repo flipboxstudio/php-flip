@@ -19,8 +19,6 @@ abstract class Autobot implements AutobotContract
 {
     public static $namingStrategy = self::NAMING_SNAKE;
 
-    public static $sortStrategy = self::SORT_ALPHA;
-
     public const TYPE_INT = 'toInt';
 
     public const TYPE_FLOAT = 'toFloat';
@@ -39,10 +37,6 @@ abstract class Autobot implements AutobotContract
 
     public const NAMING_NONE = 'none';
 
-    public const SORT_NONE = 'none';
-
-    public const SORT_ALPHA = 'alpha';
-
     protected $responseClass;
 
     protected static $commonTransformableAttributes = [
@@ -58,7 +52,7 @@ abstract class Autobot implements AutobotContract
         );
 
         return $reflectionObject->newInstanceArgs(
-            $this->collectResponseInstanceArgs($model)
+            $this->responseParams($model)
         );
     }
 
@@ -81,12 +75,7 @@ abstract class Autobot implements AutobotContract
     {
         $as = $as ?? $this->resolveNaming($field);
 
-        return [
-            $as => call_user_func_array(
-                [$this, $type],
-                [$model->get($field)]
-            ),
-        ];
+        return [$as => call_user_func_array([$this, $type], [$model->get($field)])];
     }
 
     protected function toInt($input)
@@ -138,23 +127,6 @@ abstract class Autobot implements AutobotContract
         return new stdClass();
     }
 
-    protected function transformBasicAttributes(
-        ModelContract $model
-    ): array {
-        $attributes = [];
-
-        foreach ($this->sort($this->basicAttribute()) as $attribute) {
-            list($field, $type) = $attribute;
-            $as = $this->resolveNaming($field);
-            $merge = ($type instanceof Closure || is_callable($type))
-                ? [$as => call_user_func_array($type, [$model])]
-                : $this->get($model, $field, $type, $as);
-            $attributes = array_merge($attributes, $merge);
-        }
-
-        return $attributes;
-    }
-
     protected function resolveNaming(string $name): string
     {
         if (static::$namingStrategy === self::NAMING_NONE) {
@@ -168,7 +140,7 @@ abstract class Autobot implements AutobotContract
         return Str::{static::$namingStrategy}($name);
     }
 
-    protected function commonAttribute(array $pick, array $additionalAttributes = []): array
+    protected function common(array $pick, array $additionalAttributes = []): array
     {
         $commonTransformableAttributes = Arr::where(
             static::$commonTransformableAttributes,
@@ -182,12 +154,19 @@ abstract class Autobot implements AutobotContract
         return array_merge($commonTransformableAttributes, $additionalAttributes);
     }
 
-    protected function basicAttribute(): array
+    protected function mapping(): array
+    {
+        return $this->sort(
+            $this->basic()
+        );
+    }
+
+    protected function basic(): array
     {
         throw new Exception('Method not implemented yet.');
     }
 
-    protected function collectResponseInstanceArgs(ModelContract $model): array
+    protected function responseParams(ModelContract $model): array
     {
         throw new Exception('Method not implemented yet.');
     }
@@ -199,5 +178,21 @@ abstract class Autobot implements AutobotContract
         }
 
         return $this->responseClass;
+    }
+
+    protected function __transform(ModelContract $model, array $mapping): array
+    {
+        $attributes = [];
+
+        foreach ($mapping as $attribute) {
+            list($field, $type) = $attribute;
+            $as = $this->resolveNaming($field);
+            $merge = ($type instanceof Closure || is_callable($type))
+                ? [$as => call_user_func_array($type, [$model])]
+                : $this->get($model, $field, $type, $as);
+            $attributes = array_merge($attributes, $merge);
+        }
+
+        return $attributes;
     }
 }

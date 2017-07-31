@@ -8,6 +8,7 @@ use Core\PubSub\Emitter;
 use Core\Validator\Validator;
 use Core\Managers\AuthManager;
 use Core\Managers\UserManager;
+use Core\Transformer\Transformer;
 use Core\Contracts\Util\Hasher as HasherContract;
 use Core\Contracts\Container as ContainerContract;
 use Core\Contracts\Infrastructure\Mailer as MailerContract;
@@ -176,5 +177,8 @@ class App
 
         $this->container->singleton(Emitter::class, Emitter::class);
         $this->container->alias(Emitter::class, 'core.emitter');
+
+        $this->container->singleton(Transformer::class, Transformer::class);
+        $this->container->alias(Transformer::class, 'core.transformer');
     }
 }

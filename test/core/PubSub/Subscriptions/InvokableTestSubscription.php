@@ -4,7 +4,7 @@ namespace Test\Core\PubSub\Subscriptions;
 
 use Core\Contracts\Container as ContainerContract;
 
-class AnotherTestSubscription
+class InvokableTestSubscription
 {
     public function __invoke(ContainerContract $container)
     {

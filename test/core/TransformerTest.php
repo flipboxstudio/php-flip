@@ -13,9 +13,34 @@ use Test\Core\Autobots\AdvanceTestAutobot;
 
 class TransformerTest extends TestCase
 {
-    public function testBasicTransformation()
+    protected function createTransformer()
     {
-        $transformer = $this->core->ioc(Transformer::class);
+        return $this->core->ioc(Transformer::class);
+    }
+
+    protected function createTransformedObject(Transformer $transformer, string $modelFqn, array $attributes)
+    {
+        $transformer = $transformer ?? $this->createTransformer();
+
+        $model = $this->createModel($modelFqn, $attributes);
+
+        return $transformer->transform($model);
+    }
+
+    protected function createModel(string $modelFqn, array $attributes)
+    {
+        $model = new $modelFqn();
+
+        foreach ($attributes as $property => $value) {
+            $model->set($property, $value);
+        }
+
+        return $model;
+    }
+
+    public function testTransformerApi()
+    {
+        $transformer = $this->createTransformer();
 
         $this->assertInstanceOf(
             Transformer::class,
@@ -23,67 +48,64 @@ class TransformerTest extends TestCase
             'Implementation of '.Transformer::class.' is not an instance of '.Transformer::class.'.'
         );
 
+        $this->assertTrue(
+            method_exists($transformer, 'register'),
+            'Transformer should be able to add it\'s registrar on the fly.'
+        );
+
+        $this->assertTrue(
+            method_exists($transformer, 'transform'),
+            'Transformer should be able to transform an object into something.'
+        );
+    }
+
+    public function testBasicTransformation()
+    {
+        $transformer = $this->createTransformer();
+
         $transformer->register(
             TestModel::class,
             TestAutobot::class
         );
 
-        $model = new TestModel();
-
-        $model->set('id', '123');
-        $model->set('name', 'Anu Gemes');
-        $model->set('hidden', 'SecretPassword');
-
-        $transformed = $transformer->transform($model);
-
-        $this->assertTrue(
-            method_exists($transformed, 'toArray'),
-            'Transformed should be convertable to array.'
-        );
-
-        $array = $transformed->toArray();
-
-        $this->assertTrue(
-            is_array($array),
-            'Final transformation should be an array.'
-        );
+        $transformed = $this->createTransformedObject($transformer, TestModel::class, [
+            'id' => '123',
+            'name' => 'Anu Gemes',
+            'hidden' => 'SecretPassword',
+        ]);
 
         $this->assertEquals(
             ['id' => 123, 'name' => 'Anu Gemes'],
-            $array,
+            $transformed->toArray(),
             'Is valid data structure.'
         );
     }
 
     public function testAutoSortTransformation()
     {
-        $transformer = $this->core->ioc(Transformer::class);
+        $transformer = $this->createTransformer();
 
         $transformer->register(
             TestModel::class,
             SortedTestAutobot::class
         );
 
-        $model = new TestModel();
-
-        $model->set('z', '3');
-        $model->set('y', '2');
-        $model->set('x', '1');
-
-        $transformed = $transformer->transform($model);
-
-        $array = $transformed->toArray();
+        $transformed = $this->createTransformedObject($transformer, TestModel::class, [
+            'z' => '3',
+            'y' => '2',
+            'x' => '1',
+        ]);
 
         $this->assertEquals(
             ['x' => 1, 'y' => 2, 'z' => 3],
-            $array,
+            $transformed->toArray(),
             'Is valid data structure.'
         );
     }
 
     public function testCollectionTransformation()
     {
-        $transformer = $this->core->ioc(Transformer::class);
+        $transformer = $this->createTransformer();
 
         $transformer->register(
             TestModel::class,
@@ -93,10 +115,10 @@ class TransformerTest extends TestCase
         $collection = new Collection();
 
         foreach (range(1, 3) as $id) {
-            $model = new TestModel();
-
-            $model->set('id', $id);
-            $model->set('name', 'Anu Gemes');
+            $model = $this->createModel(TestModel::class, [
+                'id' => $id,
+                'name' => 'Anu Gemes',
+            ]);
 
             $collection->push($model);
         }
@@ -116,63 +138,48 @@ class TransformerTest extends TestCase
         );
     }
 
-    public function testAdvanceTransformation()
+    public function testTransformationPropertyNaming()
     {
-        $transformer = $this->core->ioc(Transformer::class);
+        $transformer = $this->createTransformer();
 
         $transformer->register(
             AdvanceTestModel::class,
             AdvanceTestAutobot::class
         );
 
-        $model = new AdvanceTestModel();
-
-        $model->set('id', '123');
-        $model->set('name', 'Anu Gemes');
-        $model->set('phone_number', '6289123456789');
-
-        $transformed = $transformer->transform($model);
-        $array = $transformed->toArray();
+        $model = $this->createModel(AdvanceTestModel::class, [
+            'id' => '123',
+            'name' => 'Anu Gemes',
+            'phone_number' => '6289123456789',
+        ]);
 
         $this->assertEquals(
             ['id' => 123, 'name' => 'Anu Gemes', 'phone_number' => '6289123456789'],
-            $array,
+            $transformer->transform($model)->toArray(),
             'Is valid data structure.'
         );
 
         // Change naming strategy (just to make sure)
         TestAutobot::$namingStrategy = TestAutobot::NAMING_SNAKE;
-
-        $transformed = $transformer->transform($model);
-        $array = $transformed->toArray();
-
         $this->assertEquals(
             ['id' => 123, 'name' => 'Anu Gemes', 'phone_number' => '6289123456789'],
-            $array,
+            $transformer->transform($model)->toArray(),
             'Is valid data structure.'
         );
 
         // Change naming strategy
         TestAutobot::$namingStrategy = TestAutobot::NAMING_CAMEL;
-
-        $transformed = $transformer->transform($model);
-        $array = $transformed->toArray();
-
         $this->assertEquals(
             ['id' => 123, 'name' => 'Anu Gemes', 'phoneNumber' => '6289123456789'],
-            $array,
+            $transformer->transform($model)->toArray(),
             'Is valid data structure.'
         );
 
         // Change naming strategy
         TestAutobot::$namingStrategy = TestAutobot::NAMING_STUDLY;
-
-        $transformed = $transformer->transform($model);
-        $array = $transformed->toArray();
-
         $this->assertEquals(
             ['Id' => 123, 'Name' => 'Anu Gemes', 'PhoneNumber' => '6289123456789'],
-            $array,
+            $transformer->transform($model)->toArray(),
             'Is valid data structure.'
         );
     }

@@ -10,14 +10,14 @@ class SortedTestAutobot extends Autobot
 {
     protected $responseClass = TestResponse::class;
 
-    protected function collectResponseInstanceArgs(ModelContract $model): array
+    protected function responseParams(ModelContract $model): array
     {
         return [
-            $this->transformBasicAttributes($model),
+            $this->__transform($model, $this->mapping()),
         ];
     }
 
-    protected function basicAttribute(): array
+    protected function basic(): array
     {
         return [
             ['z', self::TYPE_INT],

@@ -10,31 +10,31 @@ class TokenAutobot extends Autobot
 {
     protected $responseClass = TokenResponse::class;
 
-    protected $user;
+    protected $userAutobot;
 
-    public function __construct(UserAutobot $user)
+    public function __construct(UserAutobot $userAutobot)
     {
-        $this->user = $user;
+        $this->userAutobot = $userAutobot;
     }
 
-    protected function collectResponseInstanceArgs(ModelContract $model): array
+    protected function responseParams(ModelContract $model): array
     {
         return [
-            $this->transformBasicAttributes($model),
+            $this->__transform($model, $this->mapping()),
             $model,
             $model->getUser(),
         ];
     }
 
-    protected function basicAttribute(): array
+    protected function basic(): array
     {
-        return $this->commonAttribute(
+        return $this->common(
             ['id', 'created_at', 'updated_at'],
             [
                 ['token', self::TYPE_STRING],
                 ['expired_at', self::TYPE_DATETIME],
                 ['user', function (TokenModelContract $model) {
-                    return $this->user->transform(
+                    return $this->userAutobot->transform(
                         $model->getUser()
                     );
                 }],

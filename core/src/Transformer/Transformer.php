@@ -5,6 +5,7 @@ namespace Core\Transformer;
 use ReflectionClass;
 use IteratorAggregate;
 use Core\Util\Data\Fluent;
+use Illuminate\Support\Arr;
 use Core\Util\Data\Collection;
 use Core\Exceptions\TransformerException;
 use Core\Transformer\Autobots\UserAutobot;
@@ -28,9 +29,18 @@ class Transformer
 
     protected $assigned = [];
 
+    protected $once = [];
+
     public function __construct(ContainerContract $container)
     {
         $this->container = $container;
+    }
+
+    public function once(string $modelName, string $autobotName): Transformer
+    {
+        $this->once[$modelName] = $autobotName;
+
+        return $this;
     }
 
     public function register(string $modelName, string $autobotName)
@@ -44,7 +54,7 @@ class Transformer
         $method = null;
 
         if ($this->dataIsACollection($data)) {
-            $Autobot = $this->determineAutobotFromIteratorAggregate($data);
+            $Autobot = $this->determineAutobotFromCollection($data);
             $method = 'transformCollection';
         } elseif ($this->dataIsAnItem($data)) {
             $Autobot = $this->determineAutobotFromModel($data);
@@ -67,7 +77,8 @@ class Transformer
 
     protected function dataIsACollection($data): bool
     {
-        return $data instanceof IteratorAggregate;
+        return $data instanceof IteratorAggregate
+            || is_array($data);
     }
 
     protected function dataIsAnItem($data): bool
@@ -75,9 +86,9 @@ class Transformer
         return $data instanceof ModelContract;
     }
 
-    protected function determineAutobotFromIteratorAggregate(IteratorAggregate $collection): ?string
+    protected function determineAutobotFromCollection($collection): ?string
     {
-        foreach ($collection->getIterator() as $model) {
+        foreach ($collection as $model) {
             return $this->determineAutobotFromModel($model);
         }
 
@@ -86,7 +97,19 @@ class Transformer
 
     protected function determineAutobotFromModel(ModelContract $model): ?string
     {
-        $modelFqn = get_class($model);
+        return $this->determineAutobotFromItsClassNameMapping(get_class($model))
+            ?? $this->determineAutobotFromItsContract($model);
+    }
+
+    protected function determineAutobotFromItsClassNameMapping(string $modelFqn): ?string
+    {
+        if (array_key_exists($modelFqn, $this->once)) {
+            $autobotName = $this->once[$modelFqn];
+
+            unset($this->once[$modelFqn]);
+
+            return $autobotName;
+        }
 
         if (array_key_exists($modelFqn, $this->autobots)) {
             return $this->autobots[$modelFqn];
@@ -96,37 +119,49 @@ class Transformer
             return $this->assigned[$modelFqn];
         }
 
-        $implements = array_intersect(
-            array_keys((new ReflectionClass($modelFqn))->getInterfaces()),
-            array_keys($this->autobots)
-        );
+        return null;
+    }
 
-        if (count($implements) > 0) {
-            $firstMatchingContract = reset($implements);
+    protected function determineAutobotFromItsContract(ModelContract $model): ?string
+    {
+        if ($Autobot = $this->determineAutobotFromItsContractMapping($model, $this->once)) {
+            return $Autobot;
+        }
 
-            return $this->assigned[$modelFqn] = $this->autobots[$firstMatchingContract];
+        if ($Autobot = $this->determineAutobotFromItsContractMapping($model, $this->autobots)) {
+            return $Autobot;
         }
 
         return null;
     }
 
-    protected function transformItem(
-        ModelContract $model,
-        AutobotContract $autobot
-    ): Fluent {
+    protected function determineAutobotFromItsContractMapping(ModelContract $model, array $mapping): ?string
+    {
+        $implementedInterfaces = array_intersect(
+            array_keys((new ReflectionClass($modelFqn = get_class($model)))->getInterfaces()),
+            array_keys($mapping)
+        );
+
+        if (count($implementedInterfaces) > 0) {
+            $firstMatchingContract = Arr::first($implementedInterfaces);
+
+            return $this->assigned[$modelFqn] = $mapping[$firstMatchingContract];
+        }
+
+        return null;
+    }
+
+    protected function transformItem(ModelContract $model, AutobotContract $autobot): Fluent
+    {
         return $autobot->transform($model);
     }
 
-    protected function transformCollection(
-        IteratorAggregate $collection,
-        AutobotContract $autobot
-    ): Collection {
+    protected function transformCollection(IteratorAggregate $collection, AutobotContract $autobot): Collection
+    {
         $result = new Collection();
 
         foreach ($collection as $model) {
-            $result->push(
-                $this->transformItem($model, $autobot)
-            );
+            $result->push($this->transformItem($model, $autobot));
         }
 
         return $result;

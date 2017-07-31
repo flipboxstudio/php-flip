@@ -8,7 +8,7 @@ use Test\Core\PubSub\Publishers\TestPublisher;
 use Core\Contracts\Container as ContainerContract;
 use Test\Core\PubSub\Publishers\SequentialPublisher;
 use Test\Core\PubSub\Subscriptions\StaticTestSubscription;
-use Test\Core\PubSub\Subscriptions\AnotherTestSubscription;
+use Test\Core\PubSub\Subscriptions\InvokableTestSubscription;
 
 class EventTest extends TestCase
 {
@@ -33,11 +33,11 @@ class EventTest extends TestCase
     {
         $emitter = $this->core->ioc()->make(Emitter::class);
 
-        $emitter->subscribe(Something\Random\Event::class, function (ContainerContract $container) {
+        $emitter->subscribe(Foo\Bar\Baz::class, function (ContainerContract $container) {
             $container->instance('foo', 'bar');
         });
 
-        $emitter->emit(Something\Random\Event::class, $this->core->ioc());
+        $emitter->emit(Foo\Bar\Baz::class, $this->core->ioc());
 
         $this->assertEquals($this->core->ioc()->make('foo'), 'bar');
     }
@@ -46,9 +46,9 @@ class EventTest extends TestCase
     {
         $emitter = $this->core->ioc()->make(Emitter::class);
 
-        $emitter->subscribe(Something\Random\Event::class, [StaticTestSubscription::class, 'callStatic']);
+        $emitter->subscribe(Foo\Bar\Baz::class, [StaticTestSubscription::class, 'callStatic']);
 
-        $emitter->emit(Something\Random\Event::class, $this->core->ioc());
+        $emitter->emit(Foo\Bar\Baz::class, $this->core->ioc());
 
         $this->assertEquals($this->core->ioc()->make('foo'), 'bar');
     }
@@ -57,9 +57,9 @@ class EventTest extends TestCase
     {
         $emitter = $this->core->ioc()->make(Emitter::class);
 
-        $emitter->subscribe(Something\Random\Event::class, AnotherTestSubscription::class);
+        $emitter->subscribe(Foo\Bar\Baz::class, InvokableTestSubscription::class);
 
-        $emitter->emit(Something\Random\Event::class, $this->core->ioc());
+        $emitter->emit(Foo\Bar\Baz::class, $this->core->ioc());
 
         $this->assertEquals($this->core->ioc()->make('foo'), 'bar');
     }

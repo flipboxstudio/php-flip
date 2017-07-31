@@ -39,7 +39,8 @@ class PresenterTest extends TestCase
 
         $this->assertEquals(
             $transformed->using(JSONPresenter::class)->present(),
-            json_encode(['id' => 123, 'name' => 'Anu Gemes'])
+            json_encode(['id' => 123, 'name' => 'Anu Gemes']),
+            'Presenter should be able to produce valid JSON.'
         );
 
         libxml_use_internal_errors(true);
@@ -47,7 +48,8 @@ class PresenterTest extends TestCase
         $this->assertTrue(
             simplexml_load_string(
                 $transformed->using(XMLPresenter::class)->present()
-            ) !== false
+            ) !== false,
+            'Presenter should be able to produce valid XML.'
         );
     }
 }
