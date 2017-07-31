@@ -24,17 +24,19 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(CoreApp::class, function ($app) {
-            return CoreApp::make(function (CoreContainerContract $coreContainer) use ($app) {
-                $coreContainer->singleton(UserRepositoryContract::class, UserRepository::class);
-                $coreContainer->singleton(TokenRepositoryContract::class, TokenRepository::class);
+            return CoreApp::make(function (CoreContainerContract $container) use ($app): CoreContainerContract {
+                $container->singleton(UserRepositoryContract::class, UserRepository::class);
+                $container->singleton(TokenRepositoryContract::class, TokenRepository::class);
 
-                $coreContainer->instance(IlluminateHasherContract::class, $app->make('hash'));
-                $coreContainer->singleton(HasherContract::class, Hasher::class);
+                $container->instance(IlluminateHasherContract::class, $app->make('hash'));
+                $container->singleton(HasherContract::class, Hasher::class);
 
-                $coreContainer->singleton(MailerContract::class, Mailer::class);
+                $container->singleton(MailerContract::class, Mailer::class);
 
-                return $coreContainer;
+                return $container;
             });
         });
+
+        $this->app->alias(CoreApp::class, 'core');
     }
 }

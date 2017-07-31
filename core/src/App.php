@@ -58,14 +58,7 @@ class App
         $this->container = $container;
 
         $this->checkRequiredBindings();
-
-        $this->container->instance(ContainerContract::class, $container);
-        $this->container->instance(self::class, $this);
-
-        $this->container->singleton(AuthManager::class, AuthManager::class);
-        $this->container->singleton(UserManager::class, UserManager::class);
-        $this->container->singleton(Validator::class, Validator::class);
-        $this->container->singleton(Emitter::class, Emitter::class);
+        $this->initializeContainer();
     }
 
     /**
@@ -85,13 +78,18 @@ class App
     }
 
     /**
-     * Return the container instance.
+     * Return the container instance or create something via service locator..
      *
-     * @return ContainerContract
+     * @param string binding name
+     * @param array instance construction parameter
+     *
+     * @return mixed
      */
-    public function ioc(): ContainerContract
+    public function ioc(string $binding = null, array $parameters = [])
     {
-        return $this->container;
+        return ($binding)
+            ? $this->container->makeWith($binding, $parameters)
+            : $this->container;
     }
 
     /**
@@ -154,5 +152,27 @@ class App
                 throw new RuntimeException("{$requiredBinding} is not bound to the Container.");
             }
         }
+    }
+
+    /**
+     * Bind important class.
+     */
+    protected function initializeContainer()
+    {
+        $this->container->instance(ContainerContract::class, $this->container);
+        $this->container->instance(self::class, $this);
+        $this->container->alias('core', self::class);
+
+        $this->container->singleton(AuthManager::class, AuthManager::class);
+        $this->container->alias(AuthManager::class, 'core.manager.auth');
+
+        $this->container->singleton(UserManager::class, UserManager::class);
+        $this->container->alias(UserManager::class, 'core.manager.user');
+
+        $this->container->singleton(Validator::class, Validator::class);
+        $this->container->alias(Validator::class, 'core.validator');
+
+        $this->container->singleton(Emitter::class, Emitter::class);
+        $this->container->alias(Emitter::class, 'core.emitter');
     }
 }
