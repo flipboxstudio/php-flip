@@ -3,12 +3,14 @@
 namespace Test\Core;
 
 use Test\TestCase;
+use Core\Util\Data\Fluent;
 use Core\Util\Data\Collection;
 use Test\Core\Models\TestModel;
 use Core\Transformer\Transformer;
 use Test\Core\Autobots\TestAutobot;
 use Test\Core\Models\AdvanceTestModel;
 use Test\Core\Autobots\SortedTestAutobot;
+use Test\Core\Autobots\StaticTestAutobot;
 use Test\Core\Autobots\AdvanceTestAutobot;
 
 class TransformerTest extends TestCase
@@ -66,6 +68,90 @@ class TransformerTest extends TestCase
         $transformer->register(
             TestModel::class,
             TestAutobot::class
+        );
+
+        $transformed = $this->createTransformedObject($transformer, TestModel::class, [
+            'id' => '123',
+            'name' => 'Anu Gemes',
+            'hidden' => 'SecretPassword',
+        ]);
+
+        $this->assertEquals(
+            ['id' => 123, 'name' => 'Anu Gemes'],
+            $transformed->toArray(),
+            'Is valid data structure.'
+        );
+    }
+
+    public function testOverrideAutobot()
+    {
+        $transformer = $this->createTransformer();
+
+        // It's registered
+        $transformer->register(
+            TestModel::class,
+            TestAutobot::class
+        );
+
+        // Override using closure, should work on other method
+        $transformer->once(
+            TestModel::class,
+            function (TestModel $model) {
+                return new Fluent([
+                    'id' => (int) $model->get('id'),
+                    'name' => (string) $model->get('name'),
+                    'override' => 'Ok.',
+                ]);
+            }
+        );
+
+        $transformed = $this->createTransformedObject($transformer, TestModel::class, [
+            'id' => '123',
+            'name' => 'Anu Gemes',
+            'hidden' => 'SecretPassword',
+        ]);
+
+        $this->assertEquals(
+            ['id' => 123, 'name' => 'Anu Gemes', 'override' => 'Ok.'],
+            $transformed->toArray(),
+            'Is valid data structure.'
+        );
+    }
+
+    public function testBasicTransformationFromClosure()
+    {
+        $transformer = $this->createTransformer();
+
+        $transformer->register(
+            TestModel::class,
+            function (TestModel $model) {
+                return new Fluent([
+                    'id' => (int) $model->get('id'),
+                    'name' => (string) $model->get('name'),
+                ]);
+            }
+        );
+
+        $transformed = $this->createTransformedObject($transformer, TestModel::class, [
+            'id' => '123',
+            'name' => 'Anu Gemes',
+            'hidden' => 'SecretPassword',
+        ]);
+
+        $this->assertEquals(
+            ['id' => 123, 'name' => 'Anu Gemes'],
+            $transformed->toArray(),
+            'Is valid data structure.'
+        );
+    }
+
+    public function testBasicTransformationFromStaticMethod()
+    {
+        $transformer = $this->createTransformer();
+
+        $transformer->register(
+            TestModel::class,
+            [StaticTestAutobot::class, 'transform']
         );
 
         $transformed = $this->createTransformedObject($transformer, TestModel::class, [
