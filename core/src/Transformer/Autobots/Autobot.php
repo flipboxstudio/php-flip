@@ -3,20 +3,20 @@
 namespace Core\Transformer\Autobots;
 
 use Closure;
-use DateTime;
-use stdClass;
 use Exception;
 use ReflectionClass;
 use Core\Util\Data\Fluent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Carbon;
+use Core\Concerns\TypeCaster;
 use Core\Contracts\Models\Model as ModelContract;
 use Core\Contracts\Transformer\Autobot as AutobotContract;
 
 abstract class Autobot implements AutobotContract
 {
+    use TypeCaster;
+
     public static $namingStrategy = self::NAMING_SNAKE;
 
     public const TYPE_INT = 'toInt';
@@ -37,6 +37,8 @@ abstract class Autobot implements AutobotContract
 
     public const NAMING_NONE = 'none';
 
+    protected $model;
+
     protected $responseClass;
 
     protected static $commonTransformableAttributes = [
@@ -45,14 +47,21 @@ abstract class Autobot implements AutobotContract
         ['updated_at', self::TYPE_DATETIME],
     ];
 
-    public function transform(ModelContract $model): Fluent
+    public function bind(ModelContract $model): AutobotContract
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    public function transform(): Fluent
     {
         $reflectionObject = new ReflectionClass(
             $this->responseClass()
         );
 
         return $reflectionObject->newInstanceArgs(
-            $this->responseParams($model)
+            $this->responseParams($this->model)
         );
     }
 
@@ -71,60 +80,16 @@ abstract class Autobot implements AutobotContract
         });
     }
 
-    protected function get(ModelContract $model, string $field, string $type, string $as = null): array
+    protected function get(string $field, string $type, string $as = null): array
     {
         $as = $as ?? $this->resolveNaming($field);
 
-        return [$as => call_user_func_array([$this, $type], [$model->get($field)])];
-    }
-
-    protected function toInt($input)
-    {
-        if (is_int($input)) {
-            return $input;
-        }
-
-        return (int) $input;
-    }
-
-    protected function toFloat($input)
-    {
-        if (is_float($input)) {
-            return $input;
-        }
-
-        return (float) $input;
-    }
-
-    protected function toDouble($input)
-    {
-        if (is_double($input)) {
-            return $input;
-        }
-
-        return (float) $input;
-    }
-
-    protected function toString($input)
-    {
-        if (is_string($input)) {
-            return $input;
-        }
-
-        return (string) $input;
-    }
-
-    protected function toDatetime($input)
-    {
-        if ($input instanceof DateTime) {
-            return $input;
-        }
-
-        if (is_string($input) || is_numeric($input)) {
-            return Carbon::parse($input);
-        }
-
-        return new stdClass();
+        return [
+            $as => call_user_func_array(
+                [$this, $type],
+                [$this->model->get($field)]
+            ),
+        ];
     }
 
     protected function resolveNaming(string $name): string
@@ -157,18 +122,18 @@ abstract class Autobot implements AutobotContract
     protected function mapping(): array
     {
         return $this->sort(
-            $this->basic()
+            $this->attributes()
         );
     }
 
-    protected function basic(): array
+    protected function attributes(): array
     {
-        throw new Exception('Method not implemented yet.');
+        return [];
     }
 
-    protected function responseParams(ModelContract $model): array
+    protected function responseParams(): array
     {
-        throw new Exception('Method not implemented yet.');
+        return [];
     }
 
     protected function responseClass(): string
@@ -180,16 +145,19 @@ abstract class Autobot implements AutobotContract
         return $this->responseClass;
     }
 
-    protected function __transform(ModelContract $model, array $mapping): array
+    protected function transformFromMapping(): array
     {
         $attributes = [];
 
-        foreach ($mapping as $attribute) {
+        foreach ($this->mapping() as $attribute) {
             list($field, $type) = $attribute;
+
             $as = $this->resolveNaming($field);
+
             $merge = ($type instanceof Closure || is_callable($type))
-                ? [$as => call_user_func_array($type, [$model])]
-                : $this->get($model, $field, $type, $as);
+                ? [$as => call_user_func_array($type, [$this->model])]
+                : $this->get($field, $type, $as);
+
             $attributes = array_merge($attributes, $merge);
         }
 

@@ -9,11 +9,11 @@ use Core\Contracts\Models\Model as ModelContract;
 
 class TestAutobot extends Autobot
 {
-    public function transform(ModelContract $model): Fluent
+    public function transform(): Fluent
     {
         return new TestResponse(
-            $this->get($model, 'id', self::TYPE_INT) +
-            $this->get($model, 'name', self::TYPE_STRING)
+            $this->get('id', self::TYPE_INT) +
+            $this->get('name', self::TYPE_STRING)
         );
     }
 }

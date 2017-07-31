@@ -153,7 +153,7 @@ class Transformer
 
     protected function transformItem(ModelContract $model, AutobotContract $autobot): Fluent
     {
-        return $autobot->transform($model);
+        return $autobot->bind($model)->transform();
     }
 
     protected function transformCollection(IteratorAggregate $collection, AutobotContract $autobot): Collection

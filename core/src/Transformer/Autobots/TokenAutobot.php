@@ -17,16 +17,16 @@ class TokenAutobot extends Autobot
         $this->userAutobot = $userAutobot;
     }
 
-    protected function responseParams(ModelContract $model): array
+    protected function responseParams(): array
     {
         return [
-            $this->__transform($model, $this->mapping()),
-            $model,
-            $model->getUser(),
+            $this->transformFromMapping(),
+            $this->model,
+            $this->model->getUser(),
         ];
     }
 
-    protected function basic(): array
+    protected function attributes(): array
     {
         return $this->common(
             ['id', 'created_at', 'updated_at'],
@@ -34,9 +34,9 @@ class TokenAutobot extends Autobot
                 ['token', self::TYPE_STRING],
                 ['expired_at', self::TYPE_DATETIME],
                 ['user', function (TokenModelContract $model) {
-                    return $this->userAutobot->transform(
+                    return $this->userAutobot->bind(
                         $model->getUser()
-                    );
+                    )->transform();
                 }],
             ]
         );

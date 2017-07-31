@@ -9,15 +9,15 @@ class UserAutobot extends Autobot
 {
     protected $responseClass = UserResponse::class;
 
-    protected function responseParams(ModelContract $model): array
+    protected function responseParams(): array
     {
         return [
-            $this->__transform($model, $this->mapping()),
-            $model,
+            $this->transformFromMapping(),
+            $this->model,
         ];
     }
 
-    protected function basic(): array
+    protected function attributes(): array
     {
         return $this->common(
             ['id', 'created_at', 'updated_at'],

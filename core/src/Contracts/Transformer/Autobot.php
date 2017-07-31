@@ -7,5 +7,7 @@ use Core\Contracts\Models\Model as ModelContract;
 
 interface Autobot
 {
-    public function transform(ModelContract $model): Fluent;
+    public function bind(ModelContract $model): Autobot;
+
+    public function transform(): Fluent;
 }
