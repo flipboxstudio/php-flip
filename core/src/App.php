@@ -169,6 +169,9 @@ class App
         $this->registerSingletonBindings();
     }
 
+    /**
+     * Register singleton bindings.
+     */
     protected function registerSingletonBindings()
     {
         foreach ([
