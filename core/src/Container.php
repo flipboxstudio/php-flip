@@ -18,7 +18,8 @@ class Container extends IlluminateContainer implements ContainerContract
      */
     public $availableBindings = [
         'container' => 'registerContainerBindings',
-        ContainerContract::class => 'registerContainerBindings',
+        'Core\Contracts\Container' => 'registerContainerBindings',
+        'Illuminate\Contracts\Container' => 'registerContainerBindings',
         'Illuminate\Container\Container' => 'registerContainerBindings',
 
         'validator' => 'registerValidatorBindings',
@@ -145,7 +146,7 @@ class Container extends IlluminateContainer implements ContainerContract
     protected function registerContainerBindings()
     {
         $this->instance('container', $this);
-        $this->alias(ContainerContract::class, 'container');
+        $this->alias('Core\Contracts\Container', 'container');
         $this->alias('Illuminate\Container\Container', 'container');
         $this->alias('Illuminate\Contracts\Container', 'container');
     }

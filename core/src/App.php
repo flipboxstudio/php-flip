@@ -166,19 +166,21 @@ class App
         $this->container->singleton(self::class);
         $this->container->alias('core', self::class);
 
-        $this->container->singleton(AuthManager::class, AuthManager::class);
-        $this->container->alias(AuthManager::class, 'core.manager.auth');
+        $this->registerSingletonBindings();
+    }
 
-        $this->container->singleton(UserManager::class, UserManager::class);
-        $this->container->alias(UserManager::class, 'core.manager.user');
-
-        $this->container->singleton(Validator::class, Validator::class);
-        $this->container->alias(ValidatorContract::class, 'core.validator');
-
-        $this->container->singleton(Emitter::class, Emitter::class);
-        $this->container->alias(Emitter::class, 'core.emitter');
-
-        $this->container->singleton(Transformer::class, Transformer::class);
-        $this->container->alias(Transformer::class, 'core.transformer');
+    protected function registerSingletonBindings()
+    {
+        foreach ([
+            AuthManager::class => 'core.manager.auth',
+            UserManager::class => 'core.manager.user',
+            Validator::class => 'core.validator',
+            ValidatorContract::class => 'core.validator.engine',
+            Emitter::class => 'core.emitter',
+            Transformer::class => 'core.transformer',
+        ] as $className => $alias) {
+            $this->container->singleton($className);
+            $this->container->alias($className, $alias);
+        }
     }
 }
